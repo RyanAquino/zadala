@@ -1,6 +1,9 @@
 from rest_framework import serializers
 from customers.models import Customer
 from suppliers.models import Supplier
+from django.contrib import auth
+from rest_framework.exceptions import AuthenticationFailed
+
 
 
 class CustomerSerializer(serializers.ModelSerializer):
@@ -22,3 +25,35 @@ class CustomerSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         return Customer.objects.create_user(**validated_data)
+
+
+class CustomerLoginSerializers(serializers.ModelSerializer):
+    email = serializers.EmailField(max_length=255)
+    password = serializers.CharField(max_length=65, write_only=True)
+    access = serializers.CharField(max_length=255, read_only=True)
+    refresh = serializers.CharField(max_length=255, read_only=True)
+    first_name = serializers.CharField(max_length=255, read_only=True)
+    last_name = serializers.CharField(max_length=255, read_only=True)
+
+    class Meta:
+        model = Customer
+        fields = ['email', 'password', 'access', 'refresh', 'first_name', 'last_name']
+
+    def validate(self, attrs):
+        email = attrs.get('email', '')
+        password = attrs.get('password', '')
+
+        customer = auth.authenticate(email=email, password=password)
+
+        if not customer:
+            raise AuthenticationFailed('Invalid email/password')
+
+        tokens = customer.tokens()
+
+        return {
+            'email': customer.email,
+            'first_name': customer.first_name,
+            'last_name': customer.last_name,
+            'access': tokens['token'],
+            'refresh': tokens['refresh'],
+        }

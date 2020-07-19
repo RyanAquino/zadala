@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, Group, BaseUserManager
+from rest_framework_simplejwt.tokens import RefreshToken
 
 
 class SupplierManager(BaseUserManager):
@@ -28,6 +29,13 @@ class Supplier(AbstractBaseUser):
     REQUIRED_FIELDS = ['first_name', 'last_name', 'password']
 
     objects = SupplierManager()
+
+    def tokens(self):
+        refresh = RefreshToken.for_user(self)
+        return {
+            'refresh': str(refresh),
+            'token': str(refresh.access_token)
+        }
 
     def __str__(self):
         return self.email

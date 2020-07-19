@@ -7,3 +7,6 @@ class Product(models.Model):
     price = models.IntegerField()
     picture = models.CharField(max_length=255)
     quantity = models.IntegerField()
+
+    def __str__(self):
+        return self.name

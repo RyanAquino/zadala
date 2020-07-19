@@ -1,5 +1,5 @@
 from rest_framework import routers
-from .api import ProductViewSet
+from .api.api import ProductViewSet
 
 
 router = routers.DefaultRouter(trailing_slash=False)

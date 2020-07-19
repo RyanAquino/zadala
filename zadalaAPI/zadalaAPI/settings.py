@@ -32,8 +32,9 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
-    'authapp',
     'products',
+    'customers',
+    'suppliers',
     'rest_framework',
     'django.contrib.admin',
     'django.contrib.auth',
@@ -117,6 +118,10 @@ SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': datetime.timedelta(days=3),
     'REFRESH_TOKEN_LIFETIME': datetime.timedelta(days=7)
 }
+
+
+# Customer user model
+AUTH_USER_MODEL = 'customers.Customer'
 
 
 # Internationalization

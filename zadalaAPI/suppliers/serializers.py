@@ -63,7 +63,7 @@ class SupplierLoginSerializers(serializers.ModelSerializer):
         if supplier == 'Account does not exist' or not supplier:
             raise AuthenticationFailed('Invalid email/password')
 
-        tokens = supplier.tokens()
+        tokens = supplier.tokens(supplier)
 
         return {
             'email': supplier.email,

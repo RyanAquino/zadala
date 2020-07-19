@@ -8,7 +8,7 @@ django.setup()
 from django.contrib.auth.models import Group
 
 
-GROUPS = ['Admin', 'Customers', 'Suppliers']
+GROUPS = ['Admins', 'Customers', 'Suppliers']
 
 for group in GROUPS:
     new_group, created = Group.objects.get_or_create(name=group)

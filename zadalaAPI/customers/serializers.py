@@ -5,7 +5,6 @@ from django.contrib import auth
 from rest_framework.exceptions import AuthenticationFailed
 
 
-
 class CustomerSerializer(serializers.ModelSerializer):
     password = serializers.CharField(max_length=65, min_length=8)
     email = serializers.EmailField(max_length=255, min_length=4)

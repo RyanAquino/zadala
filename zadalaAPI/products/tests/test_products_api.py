@@ -44,23 +44,22 @@ def test_add_product(logged_in_client):
 
 
 @pytest.mark.django_db
-def test_delete_product(logged_in_client):
+def test_delete_product(logged_in_client, logged_in_user):
     """
     Test delete a product
     """
-    product = ProductFactory()
-
+    product = ProductFactory(supplier=logged_in_user)
     response = logged_in_client.delete(f"/api/products/{product.id}", format="json")
 
     assert response.status_code == 204
 
 
 @pytest.mark.django_db
-def test_update_product(logged_in_client):
+def test_update_product(logged_in_client, logged_in_user):
     """
     Test update a single product
     """
-    product = ProductFactory()
+    product = ProductFactory(supplier=logged_in_user)
     data = {
         "name": "Product 1 edited",
         "description": "Product 1 edited description",
@@ -76,8 +75,30 @@ def test_update_product(logged_in_client):
     )
 
     response_data = response.json()
-    assert response.status_code == 202, response.data
+    assert response.status_code == 200, response.data
     assert data["name"] == response_data["name"]
     assert data["description"] == response_data["description"]
     assert data["price"] == response_data["price"]
     assert data["quantity"] == response_data["quantity"]
+
+
+@pytest.mark.django_db
+def test_update_product(logged_in_client, logged_in_user):
+    """
+    Test patch a single product property
+    """
+    product = ProductFactory(supplier=logged_in_user)
+    data = {
+        "name": "Product 1 edited",
+    }
+
+    response = logged_in_client.patch(
+        f"/api/products/{product.id}",
+        data,
+        format="json",
+        content_type="application/json",
+    )
+
+    response_data = response.json()
+    assert response.status_code == 200, response.data
+    assert data["name"] == response_data["name"]

@@ -9,12 +9,17 @@ from authentication.factories.group_factory import (
 
 
 @pytest.fixture
-def logged_in_client():
+def logged_in_client(logged_in_user):
+    user_token = logged_in_user.tokens()["token"]
+    return Client(HTTP_AUTHORIZATION=f"Bearer {user_token}")
+
+
+@pytest.fixture
+def logged_in_user():
     skip_if_no_django()
 
     user = UserFactory.create(
         groups=(CustomersGroupFactory.create(), SuppliersGroupFactory.create())
     )
-    token = user.tokens()
 
-    return Client(HTTP_AUTHORIZATION=f"Bearer {token['token']}")
+    return user

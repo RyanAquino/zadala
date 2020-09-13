@@ -1,5 +1,26 @@
 [
   {
+    "model": "auth.group",
+    "pk": 1,
+    "fields": {
+      "name": "Admins"
+    }
+  },
+  {
+    "model": "auth.group",
+    "pk": 2,
+    "fields": {
+      "name": "Customers"
+    }
+  },
+  {
+    "model": "auth.group",
+    "pk": 3,
+    "fields": {
+      "name": "Suppliers"
+    }
+  },
+  {
     "model": "authentication.User",
     "pk": 1,
     "fields": {
@@ -9,7 +30,8 @@
       "password": "pbkdf2_sha256$180000$p3ibTMwzZYOW$H36ENvTbjnFatUCkBVn1YutYgUGN36UMrFm32IN5b2Y=",
       "last_login": "2020-09-13 03:10:15.023878+00:00",
       "date_joined": "2020-09-13 03:10:15.023878+00:00",
-      "is_active": true
+      "is_active": true,
+      "groups": [2]
     }
   },
   {
@@ -22,7 +44,8 @@
       "password": "pbkdf2_sha256$180000$p3ibTMwzZYOW$H36ENvTbjnFatUCkBVn1YutYgUGN36UMrFm32IN5b2Y=",
       "last_login": "2020-09-13 03:10:15.023878+00:00",
       "date_joined": "2020-09-13 03:10:15.023878+00:00",
-      "is_active": true
+      "is_active": true,
+      "groups": [3]
     }
   },
   {
@@ -37,7 +60,8 @@
       "date_joined": "2020-09-13 03:10:15.023878+00:00",
       "is_active": true,
       "is_superuser": true,
-      "is_staff": true
+      "is_staff": true,
+      "groups": [1,2,3]
     }
   },
   {
@@ -50,7 +74,7 @@
       "image": null,
       "quantity": 5,
       "created_at": "2020-09-13 03:10:15.023878+00:00",
-      "supplier_id": 1
+      "supplier_id": 2
     }
   },
   {
@@ -63,7 +87,7 @@
       "image": null,
       "quantity":3,
       "created_at": "2020-09-13 03:10:15.023878+00:00",
-      "supplier_id": 1
+      "supplier_id": 2
     }
   }
 ]

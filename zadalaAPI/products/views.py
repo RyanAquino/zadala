@@ -1,32 +1,18 @@
 from products.models import Product
-from rest_framework import viewsets, generics
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from .serializers import ProductSerializer
 from authentication.permissions import (
     CustomerAccessPermission,
     SupplierAccessPermission,
 )
-from django.shortcuts import get_object_or_404
-from rest_condition import Or
+from rest_framework.viewsets import ModelViewSet
 
 
-class ProductViewSet(viewsets.ModelViewSet):
+class ProductViewSet(ModelViewSet):
+    permission_classes = (IsAuthenticatedOrReadOnly, SupplierAccessPermission)
     queryset = Product.objects.all()
-    permission_classes = [
-        IsAuthenticated,
-        Or(CustomerAccessPermission, SupplierAccessPermission),
-    ]
     serializer_class = ProductSerializer
 
-
-# class ProductViewSet(generics.ListAPIView, generics.CreateAPIView):
-#     queryset = Product.objects.all()
-#     serializer_class = ProductSerializer
-#
-#
-# class ProductDetailAPIView(generics.RetrieveAPIView,
-#                            generics.DestroyAPIView,
-#                            generics.UpdateAPIView):
-#     queryset = Product.objects.all()
-#     serializer_class = ProductSerializer
-#     lookup_field = 'id'
+    def perform_create(self, serializer):
+        """Sets the product supplier to the logged in user"""
+        serializer.save(supplier=self.request.user)

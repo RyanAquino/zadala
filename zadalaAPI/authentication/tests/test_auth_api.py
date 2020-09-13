@@ -1,9 +1,9 @@
 import pytest
 from rest_framework.test import APITestCase
-from base_data import base_data
+from .base_data import base_data
 
 
-class TestAuthenticationAPI(APITestCase, object):
+class TestAuthenticationAPI(APITestCase):
     allow_database_queries = True
 
     def setUp(self) -> None:
@@ -35,9 +35,9 @@ class TestAuthenticationAPI(APITestCase, object):
         response = self.client.post("/api/auth/login", data, format="json")
         data = response.json()
 
-        assert data['email'] == 'customer@email.com'
-        assert data['first_name'] == 'customer'
-        assert data['last_name'] == 'account'
+        assert data["email"] == "customer@email.com"
+        assert data["first_name"] == "customer"
+        assert data["last_name"] == "account"
         assert response.status_code == 200
 
     def test_tokens(self):
@@ -49,15 +49,15 @@ class TestAuthenticationAPI(APITestCase, object):
         response = self.client.post("/api/auth/login", data, format="json")
         data = response.json()
 
-        assert data['refresh'] and data['access']
+        assert data["refresh"] and data["access"]
 
-        refresh_token = {
-          "refresh": data['refresh']
-        }
-        response = self.client.post("/api/auth/token/refresh", refresh_token, format="json")
+        refresh_token = {"refresh": data["refresh"]}
+        response = self.client.post(
+            "/api/auth/token/refresh", refresh_token, format="json"
+        )
 
         assert response.status_code == 200
-        assert response.json()['access']
+        assert response.json()["access"]
 
     def test_refresh_token_with_access_token(self):
         """
@@ -67,9 +67,9 @@ class TestAuthenticationAPI(APITestCase, object):
 
         response = self.client.post("/api/auth/login", data, format="json")
         data = response.json()
-        refresh_token = {
-          "refresh": data['access']
-        }
-        response = self.client.post("/api/auth/token/refresh", refresh_token, format="json")
+        refresh_token = {"refresh": data["access"]}
+        response = self.client.post(
+            "/api/auth/token/refresh", refresh_token, format="json"
+        )
 
         assert response.status_code == 401

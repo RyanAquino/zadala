@@ -18,9 +18,9 @@ class OrderViewSet(APIView):
         serializer = OrderItemSerializer(items, many=True)
 
         resp = {
-            'total_items': order.get_cart_items,
-            'total_amount': order.get_cart_total,
-            'products': serializer.data
+            "total_items": order.get_cart_items,
+            "total_amount": order.get_cart_total,
+            "products": serializer.data,
         }
 
         return Response(resp)

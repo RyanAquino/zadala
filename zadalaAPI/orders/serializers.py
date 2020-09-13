@@ -6,7 +6,14 @@ from products.serializers import ProductSerializer
 class OrderSerializer(serializers.ModelSerializer):
     class Meta:
         model = Order
-        fields = ['customer', 'date_ordered', 'complete', 'transaction_id', 'get_cart_total', 'get_cart_items']
+        fields = [
+            "customer",
+            "date_ordered",
+            "complete",
+            "transaction_id",
+            "get_cart_total",
+            "get_cart_items",
+        ]
 
 
 class OrderItemSerializer(serializers.ModelSerializer):
@@ -14,7 +21,7 @@ class OrderItemSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = OrderItem
-        fields = ['product', 'order', 'quantity', 'date_added', 'total']
+        fields = ["product", "order", "quantity", "date_added", "total"]
 
 
 class ShippingAddressSerializer(serializers.ModelSerializer):

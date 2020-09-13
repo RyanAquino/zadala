@@ -7,8 +7,8 @@ from rest_framework import status
 
 class UserRegisterView(GenericAPIView):
     serializer_class = UserSerializer
-    authentication_classes = []
-    permission_classes = []
+    authentication_classes: list = []
+    permission_classes: list = []
 
     def post(self, request):
         serializer = UserSerializer(data=request.data)
@@ -22,8 +22,8 @@ class UserRegisterView(GenericAPIView):
 
 class SupplierRegisterView(GenericAPIView):
     serializer_class = SupplierSerializer
-    authentication_classes = []
-    permission_classes = []
+    authentication_classes: list = []
+    permission_classes: list = []
 
     def post(self, request):
         serializer = SupplierSerializer(data=request.data)
@@ -36,8 +36,8 @@ class SupplierRegisterView(GenericAPIView):
 
 class UserLoginView(GenericAPIView):
     serializer_class = UserLoginSerializers
-    authentication_classes = []
-    permission_classes = []
+    authentication_classes: list = []
+    permission_classes: list = []
 
     def post(self, request):
         serializer = self.serializer_class(data=request.data)

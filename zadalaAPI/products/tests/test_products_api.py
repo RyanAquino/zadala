@@ -46,9 +46,10 @@ def test_add_product(logged_in_client):
 @pytest.mark.django_db
 def test_delete_product(logged_in_client):
     """
-    Test delete product
+    Test delete a product
     """
     product = ProductFactory()
+
     response = logged_in_client.delete(f"/api/products/{product.id}", format="json")
 
     assert response.status_code == 204

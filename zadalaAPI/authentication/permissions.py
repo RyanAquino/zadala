@@ -17,8 +17,7 @@ class CustomerAccessPermission(permissions.BasePermission):
         if request.method in permissions.SAFE_METHODS:
             return True
 
-        user_id = request.user.id
-        return obj.id == user_id
+        return obj.id == request.user.id
 
 
 class SupplierAccessPermission(permissions.BasePermission):

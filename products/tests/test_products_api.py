@@ -8,7 +8,7 @@ def test_list_all_products_with_empty_db(logged_in_client):
     """
     Test list all products with empty database
     """
-    response = logged_in_client.get("/api/products")
+    response = logged_in_client.get("/v1/products/")
 
     assert response.status_code == 200, response.json()
     assert len(response.json()) == 0
@@ -21,7 +21,7 @@ def test_list_all_products(logged_in_client):
     Test list all products
     """
     ProductFactory()
-    response = logged_in_client.get("/api/products")
+    response = logged_in_client.get("/v1/products/")
 
     response_data = response.json()
 
@@ -35,7 +35,7 @@ def test_retrieve_product(logged_in_client):
     Test retrieve a single product
     """
     product = ProductFactory()
-    response = logged_in_client.get(f"/api/products/{product.id}")
+    response = logged_in_client.get(f"/v1/products/{product.id}/")
 
     response_data = response.json()
 
@@ -58,7 +58,7 @@ def test_create_product(logged_in_client):
         "quantity": 5,
     }
 
-    response = logged_in_client.post("/api/products", data, format="json")
+    response = logged_in_client.post("/v1/products/", data, format="json")
 
     assert Product.objects.count() == 1
     assert response.status_code == 201, response.data
@@ -70,7 +70,7 @@ def test_delete_product(logged_in_client, logged_in_user):
     Test delete a product
     """
     product = ProductFactory(supplier=logged_in_user)
-    response = logged_in_client.delete(f"/api/products/{product.id}", format="json")
+    response = logged_in_client.delete(f"/v1/products/{product.id}/", format="json")
 
     assert response.status_code == 204
 
@@ -89,7 +89,7 @@ def test_update_product(logged_in_client, logged_in_user):
     }
 
     response = logged_in_client.put(
-        f"/api/products/{product.id}",
+        f"/v1/products/{product.id}/",
         data,
         format="json",
         content_type="application/json",
@@ -114,7 +114,7 @@ def test_patch_product(logged_in_client, logged_in_user):
     }
 
     response = logged_in_client.patch(
-        f"/api/products/{product.id}",
+        f"/v1/products/{product.id}/",
         data,
         format="json",
         content_type="application/json",

@@ -38,12 +38,12 @@ schema_view = get_schema_view(
 
 urlpatterns = [
     path("admin/", admin.site.urls),
-    path("api/", include("products.urls")),
-    path("api/", include("orders.urls")),
-    path("api/auth/", include("authentication.urls")),
-    path("api/auth/token/refresh", TokenRefreshView.as_view(), name="token_refresh"),
+    path("v1/products/", include("products.urls")),
+    path("v1/orders/", include("orders.urls")),
+    path("v1/auth/", include("authentication.urls")),
+    path("v1/auth/token/refresh/", TokenRefreshView.as_view(), name="token_refresh"),
     path(
-        "docs",
+        "api-docs",
         schema_view.with_ui("swagger", cache_timeout=0),
         name="schema-swagger-ui",
     ),

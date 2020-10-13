@@ -43,7 +43,7 @@ urlpatterns = [
     path("api/auth/", include("authentication.urls")),
     path("api/auth/token/refresh", TokenRefreshView.as_view(), name="token_refresh"),
     path(
-        "swagger",
+        "docs",
         schema_view.with_ui("swagger", cache_timeout=0),
         name="schema-swagger-ui",
     ),

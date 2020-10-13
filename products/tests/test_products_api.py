@@ -1,34 +1,55 @@
 import pytest
-from products.factories.product_factory import ProductFactory
+from products.tests.factories.product_factory import ProductFactory
 from products.models import Product
 
 
 @pytest.mark.django_db
-def test_get_all_products(logged_in_client):
+def test_list_all_products_with_empty_db(logged_in_client):
     """
-    Test get all products
+    Test list all products with empty database
     """
     response = logged_in_client.get("/api/products")
 
-    assert response.status_code == 200
+    assert response.status_code == 200, response.json()
+    assert len(response.json()) == 0
+    assert response.json() == []
 
 
 @pytest.mark.django_db
-def test_get_single_products(logged_in_client):
+def test_list_all_products(logged_in_client):
     """
-    Test get a single products
+    Test list all products
+    """
+    ProductFactory()
+    response = logged_in_client.get("/api/products")
+
+    response_data = response.json()
+
+    assert response.status_code == 200, response_data
+    assert len(response_data) == 1
+
+
+@pytest.mark.django_db
+def test_retrieve_product(logged_in_client):
+    """
+    Test retrieve a single product
     """
     product = ProductFactory()
     response = logged_in_client.get(f"/api/products/{product.id}")
 
+    response_data = response.json()
+
     assert response.status_code == 200
-    assert response.json()
+    assert response_data["name"] == "Product 1"
+    assert response_data["description"] == "Product 1 description"
+    assert response_data["price"] == 35
+    assert response_data["quantity"] == 3
 
 
 @pytest.mark.django_db
-def test_add_product(logged_in_client):
+def test_create_product(logged_in_client):
     """
-    Test add new product
+    Test create a new product
     """
     data = {
         "name": "product_1",
@@ -83,7 +104,7 @@ def test_update_product(logged_in_client, logged_in_user):
 
 
 @pytest.mark.django_db
-def test_update_product(logged_in_client, logged_in_user):
+def test_patch_product(logged_in_client, logged_in_user):
     """
     Test patch a single product property
     """

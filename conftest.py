@@ -1,8 +1,8 @@
 import pytest
-from authentication.factories.user_factory import UserFactory
+from authentication.tests.factories.user_factory import UserFactory
 from django.test.client import Client
 from pytest_django.lazy_django import skip_if_no_django
-from authentication.factories.group_factory import (
+from authentication.tests.factories.group_factory import (
     CustomersGroupFactory,
     SuppliersGroupFactory,
 )

@@ -9,7 +9,7 @@ from rest_framework.viewsets import ModelViewSet
 
 
 class ProductViewSet(ModelViewSet):
-    permission_classes = (IsAuthenticatedOrReadOnly, SupplierAccessPermission)
+    permission_classes = [IsAuthenticatedOrReadOnly, SupplierAccessPermission]
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
 

@@ -28,3 +28,8 @@ class ShippingAddressSerializer(serializers.ModelSerializer):
     class Meta:
         model = ShippingAddress
         fields = "__all__"
+
+
+class UpdateCartSerializer(serializers.Serializer):
+    productId = serializers.IntegerField()
+    action = serializers.CharField()

@@ -1,3 +1,4 @@
+from authentication.tests.factories.user_factory import UserFactory
 import pytest
 
 
@@ -19,16 +20,17 @@ def test_user_register(logged_in_client):
 
 
 @pytest.mark.django_db
-def test_user_login(logged_in_client):
+def test_user_login(client):
     """
     Test User login
     """
-    data = {"email": "user@email.com", "password": "password"}
+    user = UserFactory()
+    data = {"email": user.email, "password": "password"}
 
-    response = logged_in_client.post("/v1/auth/login/", data, format="json")
+    response = client.post("/v1/auth/login/", data)
     response_data = response.json()
 
-    assert (data["email"] == response_data["email"]) and response_data
+    assert response_data["email"] == "user1@email.com"
     assert response.status_code == 200
 
 
@@ -37,7 +39,8 @@ def test_tokens(logged_in_client):
     """
     Test refresh token
     """
-    data = {"email": "user@email.com", "password": "password"}
+    user = UserFactory()
+    data = {"email": user.email, "password": "password"}
 
     response = logged_in_client.post("/v1/auth/login/", data, format="json")
     data = response.json()
@@ -59,7 +62,8 @@ def test_refresh_token_with_access_token(logged_in_client):
     """
     Test refresh token with access token should fail
     """
-    data = {"email": "user@email.com", "password": "password"}
+    user = UserFactory()
+    data = {"email": user.email, "password": "password"}
 
     response = logged_in_client.post("/v1/auth/login/", data, format="json")
     data = response.json()

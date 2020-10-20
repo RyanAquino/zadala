@@ -8,6 +8,7 @@ class Product(models.Model):
     )
     name = models.CharField(max_length=191, unique=True)
     description = models.CharField(max_length=255)
+    digital = models.BooleanField(default=False, null=True, blank=False)
     price = models.FloatField(default=0)
     image = models.ImageField(null=True)
     quantity = models.IntegerField(default=0)

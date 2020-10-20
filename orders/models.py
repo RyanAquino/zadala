@@ -13,6 +13,17 @@ class Order(models.Model):
         return str(self.id)
 
     @property
+    def shipping(self):
+        shipping = False
+        order_items = self.orderitem_set.all()
+
+        for i in order_items:
+            if not i.product.digital:
+                shipping = True
+
+        return shipping
+
+    @property
     def order_items(self):
         return self.orderitem_set.all()
 

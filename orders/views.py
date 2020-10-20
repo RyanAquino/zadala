@@ -1,9 +1,10 @@
-from orders.models import Order, OrderItem
+from orders.models import Order, OrderItem, ShippingAddress
 from rest_framework.response import Response
 from orders.serializers import (
     OrderItemSerializer,
     OrderSerializer,
     UpdateCartSerializer,
+    ShippingAddressSerializer,
 )
 from rest_framework.permissions import IsAuthenticated
 from authentication.permissions import (
@@ -14,6 +15,7 @@ from rest_framework import mixins, viewsets
 from rest_framework.decorators import action
 from rest_condition import Or
 from products.models import Product
+import datetime
 
 
 class OrderViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
@@ -71,3 +73,37 @@ class OrderViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
                 order_item.delete()
 
             return Response(status=200)
+
+    @action(
+        detail=False,
+        methods=["post"],
+        url_path="process-order",
+        serializer_class=ShippingAddressSerializer,
+        permission_classes=[Or(CustomerAccessPermission, SupplierAccessPermission)],
+    )
+    def process_order(self, request):
+        request_data = self.get_serializer(data=request.data)
+        transaction_id = datetime.datetime.now().timestamp()
+        customer = request.user
+
+        order, created = Order.objects.get_or_create(customer=customer, complete=False)
+
+        if request_data.is_valid():
+            order.transaction_id = transaction_id
+            order.complete = True
+            order.save()
+
+            if order.shipping:
+                shipping = ShippingAddress.objects.create(
+                    customer=customer,
+                    order=order,
+                    address=request_data.data["address"],
+                    city=request_data.data["city"],
+                    state=request_data.data["state"],
+                    zipcode=request_data.data["zipcode"],
+                )
+                shipping.save()
+
+                return Response(ShippingAddressSerializer(shipping).data, status=201)
+            return Response("Order not found", status=400)
+        return Response("Request data invalid", status=400)

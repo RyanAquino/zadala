@@ -11,3 +11,4 @@ class ProductFactory(DjangoModelFactory):
     price = 35
     image = None
     quantity = 3
+    digital = False

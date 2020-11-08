@@ -27,25 +27,17 @@ def test_list_all_orders(logged_in_client, logged_in_user):
     assert response.status_code == 200, response.data
     assert response_data["total_items"] == 35
     assert response_data["total_amount"] == 1225.0
-    assert response_data["products"] == [
-        {
-            "product": {
-                "id": 1,
-                "name": "Product 1",
-                "description": "Product 1 description",
-                "digital": False,
-                "price": 35.0,
-                "image": None,
-                "quantity": 3,
-                "created_at": "2020-10-20T12:30:57.951759Z",
-                "supplier": None,
-            },
-            "order": 1,
-            "quantity": 35,
-            "date_added": "2020-10-20T12:30:57.955888Z",
-            "total": 1225.0,
-        }
-    ]
+
+    order_details = response_data["products"][0]
+    product_details = order_details["product"]
+
+    assert product_details["name"] == "Product 1"
+    assert product_details["description"] == "Product 1 description"
+    assert product_details["price"] == 35.0
+    assert product_details["quantity"] == 3
+    assert order_details["order"] == 2
+    assert order_details["quantity"] == 35
+    assert order_details["total"] == 1225.0
 
 
 @pytest.mark.django_db

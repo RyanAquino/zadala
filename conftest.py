@@ -5,6 +5,7 @@ from pytest_django.lazy_django import skip_if_no_django
 from authentication.tests.factories.group_factory import (
     CustomersGroupFactory,
     SuppliersGroupFactory,
+    AdminsGroupFactory,
 )
 
 
@@ -19,7 +20,16 @@ def logged_in_user():
     skip_if_no_django()
 
     user = UserFactory.create(
-        groups=(CustomersGroupFactory.create(), SuppliersGroupFactory.create())
+        groups=(
+            CustomersGroupFactory.create(),
+            SuppliersGroupFactory.create(),
+            AdminsGroupFactory.create(),
+        )
     )
 
     return user
+
+
+@pytest.fixture
+def admin_group():
+    UserFactory.create(groups=(AdminsGroupFactory.create(),))

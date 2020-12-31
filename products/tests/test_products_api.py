@@ -39,6 +39,7 @@ def test_retrieve_product(logged_in_client):
 
     response_data = response.json()
 
+    assert str(product) == "Product 1"
     assert response.status_code == 200
     assert response_data["name"] == "Product 1"
     assert response_data["description"] == "Product 1 description"

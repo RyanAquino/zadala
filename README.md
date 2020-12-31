@@ -33,6 +33,10 @@ python manage.py migrate
 ```
 python groups.py
 ```
+##### Creating Admin Super User
+```
+python manage.py createsuperuser
+```
 ##### Run server
 ```
 python manage.py runserver

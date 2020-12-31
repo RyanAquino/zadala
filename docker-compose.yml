@@ -1,9 +1,10 @@
-version: '3.1'
+version: '3.8'
 #docker-compose up && docker-compose rm -fsv # run and remove on exit
 
 services:
   db:
     image: postgres
+    container_name: postgresql
     restart: always
     ports:
       - 5432:5432

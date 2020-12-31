@@ -26,6 +26,7 @@ class OrderViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
 
     def list(self, request, *args, **kwargs):
         customer = request.user
+        self.check_object_permissions(self.request, customer)
         order, created = Order.objects.get_or_create(customer=customer, complete=False)
         items = order.order_items
         serializer = OrderItemSerializer(items, many=True)
@@ -52,6 +53,7 @@ class OrderViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
             request_action = request_data.data["action"]
             product_id = request_data.data["productId"]
             customer = request.user
+            self.check_object_permissions(self.request, customer)
 
             product = Product.objects.get(id=product_id)
             order, created = Order.objects.get_or_create(
@@ -85,6 +87,7 @@ class OrderViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
         request_data = self.get_serializer(data=request.data)
         transaction_id = datetime.datetime.now().timestamp()
         customer = request.user
+        self.check_object_permissions(self.request, customer)
 
         order, created = Order.objects.get_or_create(customer=customer, complete=False)
 

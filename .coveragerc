@@ -4,3 +4,6 @@ omit =
     */migrations/*
     */tests/*
     */venv/*
+    */zadalaAPI/*
+    manage.py
+    */apps.py

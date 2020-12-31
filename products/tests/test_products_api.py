@@ -1,6 +1,7 @@
 import pytest
 from products.tests.factories.product_factory import ProductFactory
 from products.models import Product
+from django.test.client import MULTIPART_CONTENT
 
 
 @pytest.mark.django_db
@@ -81,19 +82,25 @@ def test_update_product(logged_in_client, logged_in_user):
     """
     Test update a single product
     """
+    content_type = MULTIPART_CONTENT
     product = ProductFactory(supplier=logged_in_user)
     data = {
         "name": "Product 1 edited",
         "description": "Product 1 edited description",
         "price": 0,
         "quantity": 0,
+        "image": {},
     }
 
-    response = logged_in_client.put(
+    data = logged_in_client._encode_json({} if not data else data, content_type)
+    encoded_data = logged_in_client._encode_data(data, content_type)
+    response = logged_in_client.generic(
+        "PUT",
         f"/v1/products/{product.id}/",
-        data,
-        format="json",
-        content_type="application/json",
+        encoded_data,
+        content_type=content_type,
+        secure=False,
+        enctype="multipart/form-data",
     )
 
     response_data = response.json()
@@ -109,16 +116,21 @@ def test_patch_product(logged_in_client, logged_in_user):
     """
     Test patch a single product property
     """
+    content_type = MULTIPART_CONTENT
     product = ProductFactory(supplier=logged_in_user)
     data = {
         "name": "Product 1 edited",
     }
 
-    response = logged_in_client.patch(
+    data = logged_in_client._encode_json({} if not data else data, content_type)
+    encoded_data = logged_in_client._encode_data(data, content_type)
+    response = logged_in_client.generic(
+        "PATCH",
         f"/v1/products/{product.id}/",
-        data,
-        format="json",
-        content_type="application/json",
+        encoded_data,
+        content_type=content_type,
+        secure=False,
+        enctype="multipart/form-data",
     )
 
     response_data = response.json()

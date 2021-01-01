@@ -20,9 +20,9 @@ python -m venv venv
 ```
 pip install -r requirements.txt
 ```
-##### Setup Postgres Database with Docker
+##### Edit `zadala_config.py` base on your needs
 ```
-docker-compose up && docker-compose rm -fsv
+vi zadala_config.py
 ```
 
 ##### Migrate database
@@ -37,9 +37,17 @@ python groups.py
 ```
 python manage.py createsuperuser
 ```
+```
+GET /admin - admin page
+```
 ##### Run server
 ```
 python manage.py runserver
+```
+
+### Setup with Docker (Alternative)
+```
+docker-compose up -d
 ```
 
 ### Load initial data (Optional)

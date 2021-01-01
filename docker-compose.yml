@@ -1,11 +1,16 @@
 version: '3.8'
-#docker-compose up && docker-compose rm -fsv # run and remove on exit
+# docker-compose up && docker-compose rm -fsv # run and remove on exit
 
 services:
   db:
     image: postgres
     container_name: postgresql
     restart: always
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U postgres" ]
+      interval: 5s
+      timeout: 10s
+      retries: 120
     ports:
       - 5432:5432
     expose:
@@ -14,8 +19,29 @@ services:
       POSTGRES_PASSWORD: 1
       POSTGRES_DB: zadala
 
+  # Database visualizer
   adminer:
     image: adminer
     restart: always
     ports:
       - 8080:8080
+    depends_on:
+      - db
+
+  zadala-api:
+    build: .
+    ports:
+      - 80:8000
+    expose:
+      - 80
+    environment:
+      - DB_NAME=zadala
+      - DB_USER=postgres
+      - DB_PASS=1
+      - DB_HOST=db
+      - DB_PORT=5432
+      - ENV=dev
+    command: sh -c "python manage.py migrate && python groups.py && python manage.py runserver 0.0.0.0:8000"
+    depends_on:
+      db:
+        condition: service_healthy

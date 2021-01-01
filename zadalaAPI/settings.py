@@ -9,7 +9,7 @@ https://docs.djangoproject.com/en/3.0/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.0/ref/settings/
 """
-
+from zadala_config import database
 import os
 import datetime
 
@@ -24,7 +24,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = "g-97z8jr0j$c&4ysf5ygmo&pp8r&x_hxmg2n*-b$zk6us27bs8"
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False if "ENV" in os.environ and os.environ["ENV"] == "dev" else True
 
 ALLOWED_HOSTS = ["*"]
 
@@ -79,16 +79,7 @@ WSGI_APPLICATION = "zadalaAPI.wsgi.application"
 # Database
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
 
-DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.postgresql",
-        "NAME": "zadala",
-        "USER": "postgres",
-        "PASSWORD": "1",
-        "HOST": "127.0.0.1",
-        "PORT": "5432",
-    }
-}
+DATABASES = {"default": database}
 
 if os.environ.get("GITHUB_WORKFLOW"):
     DATABASES = {
@@ -124,7 +115,8 @@ REST_FRAMEWORK = {
 SWAGGER_SETTINGS = {
     "SECURITY_DEFINITIONS": {
         "Bearer": {"type": "apiKey", "name": "Authorization", "in": "header"}
-    }
+    },
+    "USE_SESSION_AUTH": False,
 }
 
 SIMPLE_JWT = {

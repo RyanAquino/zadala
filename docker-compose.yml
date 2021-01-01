@@ -40,8 +40,9 @@ services:
       - DB_PASS=1
       - DB_HOST=db
       - DB_PORT=5432
-      - ENV=dev
-    command: sh -c "python manage.py migrate && python groups.py && python manage.py runserver 0.0.0.0:8000"
+      - ENV=prod
+      - SECRET_KEY=my-secret
+    command: sh -c "python manage.py migrate && python groups.py && python manage.py runserver 0.0.0.0:8000 --insecure"
     depends_on:
       db:
         condition: service_healthy

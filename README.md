@@ -1,4 +1,10 @@
 # Zadala API
+Zadala API is an ecommerce web API built with django rest framework.
+
+### Endpoints
+- `GET /admin` - Admin page
+- `GET /api-docs` - Swagger API documentation 
+
 ### Requirements
 - python 3
 - docker

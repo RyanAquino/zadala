@@ -9,7 +9,7 @@ https://docs.djangoproject.com/en/3.0/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.0/ref/settings/
 """
-from zadala_config import database
+from zadala_config import database, ZADALA_SECRET_KEY
 import os
 import datetime
 
@@ -21,10 +21,11 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # See https://docs.djangoproject.com/en/3.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = "g-97z8jr0j$c&4ysf5ygmo&pp8r&x_hxmg2n*-b$zk6us27bs8"
+SECRET_KEY = os.environ.get("SECRET_KEY", ZADALA_SECRET_KEY)
+
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False if "ENV" in os.environ and os.environ["ENV"] == "dev" else True
+DEBUG = False if "ENV" in os.environ and os.environ["ENV"] == "prod" else True
 
 ALLOWED_HOSTS = ["*"]
 
@@ -79,7 +80,16 @@ WSGI_APPLICATION = "zadalaAPI.wsgi.application"
 # Database
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
 
-DATABASES = {"default": database}
+DATABASES = {
+    "default": {
+        "ENGINE": os.environ.get("DB_ENGINE", database["ENGINE"]),
+        "NAME": os.environ.get("DB_NAME", database["NAME"]),
+        "USER": os.environ.get("DB_USER", database["USER"]),
+        "PASSWORD": os.environ.get("DB_PASS", database["PASSWORD"]),
+        "HOST": os.environ.get("DB_HOST", database["HOST"]),
+        "PORT": os.environ.get("DB_PORT", database["PORT"]),
+    }
+}
 
 if os.environ.get("GITHUB_WORKFLOW"):
     DATABASES = {

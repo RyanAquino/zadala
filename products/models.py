@@ -6,7 +6,7 @@ class Product(models.Model):
     supplier = models.ForeignKey(
         settings.AUTH_USER_MODEL, on_delete=models.CASCADE, null=True
     )
-    name = models.TextField()
+    name = models.TextField(unique=True)
     description = models.TextField()
     digital = models.BooleanField(default=False, null=True, blank=False)
     price = models.FloatField(default=0)

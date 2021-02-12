@@ -12,8 +12,8 @@ def test_list_all_products_with_empty_db(logged_in_client):
     response = logged_in_client.get("/v1/products/")
 
     assert response.status_code == 200, response.json()
-    assert len(response.json()) == 0
-    assert response.json() == []
+    assert len(response.json()["results"]) == 0
+    assert response.json()["results"] == []
 
 
 @pytest.mark.django_db
@@ -24,7 +24,7 @@ def test_list_all_products(logged_in_client):
     ProductFactory()
     response = logged_in_client.get("/v1/products/")
 
-    response_data = response.json()
+    response_data = response.json()["results"]
 
     assert response.status_code == 200, response_data
     assert len(response_data) == 1

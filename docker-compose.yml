@@ -24,16 +24,16 @@ services:
     image: adminer
     restart: always
     ports:
-      - 8080:8080
+      - 8081:8080
     depends_on:
       - db
 
   zadala-api:
     build: .
     ports:
-      - 80:8000
+      - 8080:8000
     expose:
-      - 80
+      - 8080
     environment:
       - DB_NAME=zadala
       - DB_USER=postgres
@@ -42,7 +42,7 @@ services:
       - DB_PORT=5432
       - ENV=prod
       - SECRET_KEY=my-secret
-    command: sh -c "python manage.py migrate && python groups.py && python manage.py runserver 0.0.0.0:8000 --insecure"
+    command: sh -c "python manage.py migrate && python groups.py && python manage.py collectstatic --noinput && python manage.py runserver 0.0.0.0:8000"
     depends_on:
       db:
         condition: service_healthy

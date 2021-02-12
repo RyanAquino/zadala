@@ -10,6 +10,7 @@ class Product(models.Model):
     description = models.TextField()
     digital = models.BooleanField(default=False, null=True, blank=False)
     price = models.FloatField(default=0)
+    image_url = models.URLField(null=True)
     image = models.ImageField(null=True)
     quantity = models.IntegerField(default=1)
     created_at = models.DateTimeField(auto_now_add=True)

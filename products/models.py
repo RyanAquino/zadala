@@ -11,7 +11,7 @@ class Product(models.Model):
     digital = models.BooleanField(default=False, null=True, blank=False)
     price = models.FloatField(default=0)
     image = models.ImageField(null=True)
-    quantity = models.IntegerField(default=0)
+    quantity = models.IntegerField(default=1)
     created_at = models.DateTimeField(auto_now_add=True)
 
     REQUIRED_FIELDS = "__all__"

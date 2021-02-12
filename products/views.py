@@ -4,13 +4,15 @@ from .serializers import ProductSerializer
 from authentication.permissions import SupplierAccessPermission
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.parsers import MultiPartParser
+from rest_framework.pagination import PageNumberPagination
 
 
 class ProductViewSet(ModelViewSet):
     permission_classes = [IsAuthenticatedOrReadOnly, SupplierAccessPermission]
-    queryset = Product.objects.all()
+    queryset = Product.objects.all().order_by("created_at")
     serializer_class = ProductSerializer
     parser_classes = (MultiPartParser,)
+    pagination_class = PageNumberPagination
 
     def perform_create(self, serializer):
         """Sets the product supplier to the logged in user"""

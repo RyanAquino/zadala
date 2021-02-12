@@ -49,16 +49,15 @@ def test_update_cart(logged_in_client):
     """
     order_item = OrderItemFactory()
     product_id = order_item.product.id
-    order_id = order_item.order.id
     data = {"productId": product_id, "action": "add"}
 
-    response = logged_in_client.post(f"/v1/orders/{order_id}/update-cart/", data=data)
+    response = logged_in_client.post(f"/v1/orders/update-cart/", data=data)
 
     assert response.status_code == 200
 
     data = {"productId": product_id, "action": "remove"}
 
-    response = logged_in_client.post(f"/v1/orders/{order_id}/update-cart/", data=data)
+    response = logged_in_client.post(f"/v1/orders/update-cart/", data=data)
 
     assert response.status_code == 200
 

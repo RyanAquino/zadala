@@ -40,41 +40,41 @@ class OrderViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
         return Response(resp)
 
     @action(
-        detail=True,
+        detail=False,
         methods=["post"],
         url_path="update-cart",
         serializer_class=UpdateCartSerializer,
         permission_classes=[Or(CustomerAccessPermission, SupplierAccessPermission)],
     )
-    def update_cart(self, request, pk):
+    def update_cart(self, request):
         request_data = self.get_serializer(data=request.data)
+        request_data.is_valid(raise_exception=True)
 
-        if request_data.is_valid():
-            request_action = request_data.data["action"]
-            product_id = request_data.data["productId"]
-            customer = request.user
-            self.check_object_permissions(self.request, customer)
+        request_action = request_data.data["action"]
+        product_id = request_data.data["productId"]
+        customer = request.user
+        self.check_object_permissions(self.request, customer)
 
-            product = Product.objects.get(id=product_id)
-            order, created = Order.objects.get_or_create(
-                customer=customer, complete=False
-            )
+        product = Product.objects.get(id=product_id)
+        order, created = Order.objects.get_or_create(
+            customer=customer, complete=False
+        )
 
-            order_item, created = OrderItem.objects.get_or_create(
-                order=order, product=product
-            )
+        order_item, created = OrderItem.objects.get_or_create(
+            order=order, product=product
+        )
 
-            if request_action == "add":
-                order_item.quantity += 1
-            elif request_action == "remove":
-                order_item.quantity -= 1
+        if request_action == "add":
+            order_item.quantity += 1
+        elif request_action == "remove":
+            order_item.quantity -= 1
 
-            order_item.save()
+        order_item.save()
 
-            if order_item.quantity <= 0:
-                order_item.delete()
+        if order_item.quantity <= 0:
+            order_item.delete()
 
-            return Response(status=200)
+        return Response(status=200)
 
     @action(
         detail=False,

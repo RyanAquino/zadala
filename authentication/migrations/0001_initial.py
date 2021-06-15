@@ -3,6 +3,15 @@
 from django.db import migrations, models
 
 
+def apply_migration(apps, schema_editor):
+    db_alias = schema_editor.connection.alias
+
+    Group = apps.get_model("auth", "Group")
+    Group.objects.using(db_alias).bulk_create(
+        [Group(name="Admins"), Group(name="Customers"), Group(name="Suppliers")]
+    )
+
+
 class Migration(migrations.Migration):
 
     initial = True
@@ -60,4 +69,5 @@ class Migration(migrations.Migration):
                 "abstract": False,
             },
         ),
+        migrations.RunPython(apply_migration),
     ]

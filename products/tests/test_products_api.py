@@ -44,7 +44,7 @@ def test_retrieve_product(logged_in_client):
     assert response.status_code == 200
     assert response_data["name"] == "Product 1"
     assert response_data["description"] == "Product 1 description"
-    assert response_data["price"] == 35
+    assert response_data["price"] == "35.00"
     assert response_data["quantity"] == 3
 
 
@@ -87,7 +87,7 @@ def test_update_product(logged_in_client, logged_in_user):
     data = {
         "name": "Product 1 edited",
         "description": "Product 1 edited description",
-        "price": 0,
+        "price": "1.00",
         "quantity": 0,
         "image": {},
     }

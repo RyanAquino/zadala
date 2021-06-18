@@ -35,7 +35,7 @@ def test_list_all_orders(logged_in_client, logged_in_user):
     assert str(order_item) == "1"
     assert product_details["name"] == "Product 1"
     assert product_details["description"] == "Product 1 description"
-    assert product_details["price"] == 35.0
+    assert product_details["price"] == "35.00"
     assert product_details["quantity"] == 3
     assert order_details["order"] == 2
     assert order_details["quantity"] == 35

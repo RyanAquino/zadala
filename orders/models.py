@@ -1,6 +1,8 @@
 from django.db import models
 from authentication.models import User
 from products.models import Product
+from django.db.models.signals import post_delete
+from django.dispatch import receiver
 
 
 class Order(models.Model):
@@ -66,3 +68,12 @@ class ShippingAddress(models.Model):
 
     def __str__(self):  # pragma: no cover
         return str(self.address)
+
+
+@receiver(post_delete, sender="orders.OrderItem")
+def delete_order(sender, instance: OrderItem, **kwargs):
+    order_id = instance.order_id
+    order_items = OrderItem.objects.filter(order_id=instance.order_id).count()
+
+    if order_items == 0:
+        Order.objects.get(pk=order_id).delete()

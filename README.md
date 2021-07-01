@@ -35,16 +35,9 @@ vi zadala_config.py
 ```
 python manage.py migrate
 ```
-##### Populate groups
-```
-python groups.py
-```
 ##### Creating Admin Super User
 ```
 python manage.py createsuperuser
-```
-```
-GET /admin - admin page
 ```
 ##### Run server
 ```

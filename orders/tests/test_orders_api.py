@@ -1,5 +1,6 @@
 from orders.tests.factories.order_item_factory import OrderItemFactory
 from orders.tests.factories.order_factory import OrderFactory
+from orders.models import OrderItem, Order
 import pytest
 
 
@@ -33,7 +34,7 @@ def test_list_all_orders(logged_in_client, logged_in_user):
 
     assert str(customer_order) == "2"
     assert str(order_item) == "1"
-    assert product_details["name"] == "Product 1"
+    assert product_details["name"] == "Product 0"
     assert product_details["description"] == "Product 1 description"
     assert product_details["price"] == "35.00"
     assert product_details["quantity"] == 3
@@ -96,3 +97,17 @@ def test_process_order_not_found(logged_in_client, logged_in_user):
 
     assert response.status_code == 400
     assert response.json() == "Order not found"
+
+
+@pytest.mark.django_db
+def test_delete_single_order_item_should_delete_main_order(logged_in_user):
+    OrderItemFactory()
+    OrderItem.objects.first().delete()
+    assert OrderItem.objects.count() == 0 and Order.objects.count() == 0
+
+
+@pytest.mark.django_db
+def test_multiple_order_items_should_not_delete_main_order(logged_in_user):
+    OrderItemFactory.create_batch(5)
+    OrderItem.objects.first().delete()
+    assert OrderItem.objects.count() == 4 and Order.objects.count() == 4

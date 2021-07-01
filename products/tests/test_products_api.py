@@ -35,14 +35,14 @@ def test_retrieve_product(logged_in_client):
     """
     Test retrieve a single product
     """
-    product = ProductFactory()
+    product = ProductFactory(name="Product Name")
     response = logged_in_client.get(f"/v1/products/{product.id}/")
 
     response_data = response.json()
 
-    assert str(product) == "Product 1"
+    assert str(product) == "Product Name"
     assert response.status_code == 200
-    assert response_data["name"] == "Product 1"
+    assert response_data["name"] == "Product Name"
     assert response_data["description"] == "Product 1 description"
     assert response_data["price"] == "35.00"
     assert response_data["quantity"] == 3

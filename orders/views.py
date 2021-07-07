@@ -72,7 +72,16 @@ class OrderViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
         if order_item.quantity <= 0:
             order_item.delete()
 
-        return Response(status=200)
+        items = order.order_items
+        serializer = OrderItemSerializer(items, many=True)
+
+        resp = {
+            "total_items": order.get_cart_items,
+            "total_amount": order.get_cart_total,
+            "products": serializer.data,
+        }
+
+        return Response(data=resp, status=200)
 
     @action(
         detail=False,
@@ -88,23 +97,22 @@ class OrderViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
         self.check_object_permissions(self.request, customer)
 
         order, created = Order.objects.get_or_create(customer=customer, complete=False)
+        request_data.is_valid(raise_exception=True)
 
-        if request_data.is_valid():
-            order.transaction_id = transaction_id
-            order.complete = True
-            order.save()
+        order.transaction_id = transaction_id
+        order.complete = True
+        order.save()
 
-            if order.shipping:
-                shipping = ShippingAddress.objects.create(
-                    customer=customer,
-                    order=order,
-                    address=request_data.data["address"],
-                    city=request_data.data["city"],
-                    state=request_data.data["state"],
-                    zipcode=request_data.data["zipcode"],
-                )
-                shipping.save()
+        if order.shipping:
+            shipping = ShippingAddress.objects.create(
+                customer=customer,
+                order=order,
+                address=request_data.data["address"],
+                city=request_data.data["city"],
+                state=request_data.data["state"],
+                zipcode=request_data.data["zipcode"],
+            )
+            shipping.save()
 
-                return Response(ShippingAddressSerializer(shipping).data, status=201)
-            return Response("Order not found", status=400)
-        return Response("Request data invalid", status=400)
+            return Response(ShippingAddressSerializer(shipping).data, status=201)
+        return Response("Order not found", status=400)

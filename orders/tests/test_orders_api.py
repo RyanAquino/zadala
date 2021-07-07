@@ -19,7 +19,7 @@ def test_list_all_orders(logged_in_client, logged_in_user):
     """
     Test list all orders
     """
-    customer_order = OrderFactory(customer=logged_in_user)
+    customer_order = OrderFactory(id=1, customer=logged_in_user)
     order_item = OrderItemFactory(order=customer_order)
 
     response = logged_in_client.get("/v1/orders/")
@@ -32,13 +32,13 @@ def test_list_all_orders(logged_in_client, logged_in_user):
     order_details = response_data["products"][0]
     product_details = order_details["product"]
 
-    assert str(customer_order) == "2"
+    assert str(customer_order) == "1"
     assert str(order_item) == "1"
     assert product_details["name"] == "Product 0"
     assert product_details["description"] == "Product 1 description"
     assert product_details["price"] == "35.00"
     assert product_details["quantity"] == 3
-    assert order_details["order"] == 2
+    assert order_details["order"] == 1
     assert order_details["quantity"] == 35
     assert order_details["total"] == 1225.0
 
@@ -53,14 +53,24 @@ def test_update_cart(logged_in_client):
     data = {"productId": product_id, "action": "add"}
 
     response = logged_in_client.post(f"/v1/orders/update-cart/", data=data)
+    response_data = response.json()
+    order_items = response_data["products"]
 
     assert response.status_code == 200
+    assert response_data["total_items"] == 1
+    assert response_data["total_amount"] == 35
+    assert len(order_items) == 1
 
     data = {"productId": product_id, "action": "remove"}
 
     response = logged_in_client.post(f"/v1/orders/update-cart/", data=data)
+    response_data = response.json()
+    order_items = response_data["products"]
 
     assert response.status_code == 200
+    assert response_data["total_items"] == 0
+    assert response_data["total_amount"] == 0
+    assert len(order_items) == 0
 
 
 @pytest.mark.django_db

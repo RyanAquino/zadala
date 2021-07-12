@@ -1,3 +1,6 @@
+from rest_framework.generics import get_object_or_404
+
+from orders.exceptions import UnprocessableEntity
 from orders.models import Order, OrderItem, ShippingAddress
 from rest_framework.response import Response
 from orders.serializers import (
@@ -50,12 +53,12 @@ class OrderViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
         request_data = self.get_serializer(data=request.data)
         request_data.is_valid(raise_exception=True)
 
-        request_action = request_data.data["action"]
-        product_id = request_data.data["productId"]
+        request_action = request_data.validated_data["action"]
+        product_id = request_data.validated_data["productId"]
         customer = request.user
         self.check_object_permissions(self.request, customer)
 
-        product = Product.objects.get(id=product_id)
+        product = get_object_or_404(Product.objects.all(), pk=product_id)
         order, created = Order.objects.get_or_create(customer=customer, complete=False)
 
         order_item, created = OrderItem.objects.get_or_create(
@@ -64,6 +67,10 @@ class OrderViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
 
         if request_action == "add":
             order_item.quantity += 1
+            if order_item.quantity > product.quantity:
+                raise UnprocessableEntity(
+                    detail="Order Item quantity exceeds available stock"
+                )
         elif request_action == "remove":
             order_item.quantity -= 1
 

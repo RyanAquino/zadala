@@ -5,6 +5,7 @@ from authentication.permissions import SupplierAccessPermission
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.parsers import MultiPartParser
 from rest_framework.pagination import PageNumberPagination
+from rest_framework import filters
 
 
 class ProductViewSet(ModelViewSet):
@@ -13,6 +14,8 @@ class ProductViewSet(ModelViewSet):
     serializer_class = ProductSerializer
     parser_classes = (MultiPartParser,)
     pagination_class = PageNumberPagination
+    filter_backends = [filters.SearchFilter]
+    search_fields = ["name"]
 
     def perform_create(self, serializer):
         """Sets the product supplier to the logged in user"""

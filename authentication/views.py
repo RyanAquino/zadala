@@ -1,5 +1,14 @@
+from rest_condition import Or
 from rest_framework.generics import GenericAPIView
-from .serializers import UserSerializer, UserLoginSerializers, SupplierSerializer
+from rest_framework.permissions import IsAuthenticated
+
+from .permissions import CustomerAccessPermission, SupplierAccessPermission
+from .serializers import (
+    UserSerializer,
+    UserLoginSerializers,
+    SupplierSerializer,
+    UserProfileSerializer,
+)
 
 from rest_framework.response import Response
 from rest_framework import status
@@ -44,4 +53,17 @@ class UserLoginView(GenericAPIView):
 
         serializer.is_valid(raise_exception=True)
 
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+class UserProfileView(GenericAPIView):
+    serializer_class = UserProfileSerializer
+    pagination_class = None
+    permission_classes = [
+        IsAuthenticated,
+        Or(SupplierAccessPermission, CustomerAccessPermission),
+    ]
+
+    def get(self, request):
+        serializer = self.get_serializer(request.user)
         return Response(serializer.data, status=status.HTTP_200_OK)

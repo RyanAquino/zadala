@@ -136,3 +136,20 @@ def test_patch_product(logged_in_client, logged_in_user):
     response_data = response.json()
     assert response.status_code == 200, response.data
     assert data["name"] == response_data["name"]
+
+
+@pytest.mark.django_db
+def test_search_product_name_filter(logged_in_client):
+    """
+    Test filter products by name
+    """
+    ProductFactory(name="Sample Product Name")
+    ProductFactory.create_batch(5)
+    search_params = {"search": "Sample Product Name"}
+    response = logged_in_client.get("/v1/products/", search_params)
+    data = response.json()
+
+    assert response.status_code == 200
+    assert Product.objects.count() == 6
+    assert data["count"] == 1 and len(data["results"]) == 1
+    assert data["results"][0]["name"] == "Sample Product Name"

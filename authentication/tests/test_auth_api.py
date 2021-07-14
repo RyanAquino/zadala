@@ -1,3 +1,5 @@
+from django.test import Client
+
 from authentication.tests.factories.user_factory import UserFactory
 from authentication.models import User
 import pytest
@@ -128,3 +130,22 @@ def test_refresh_token_with_access_token(logged_in_client):
     )
 
     assert response.status_code == 401
+
+
+@pytest.mark.django_db
+def test_retrieve_user_profile():
+    """
+    Test retrieval of user profile
+    """
+    mock_logged_in_user = UserFactory(
+        email="test_test2@email.com", first_name="test", last_name="test2"
+    )
+    user_token = mock_logged_in_user.tokens()["token"]
+    client = Client(HTTP_AUTHORIZATION=f"Bearer {user_token}")
+    response = client.get("/v1/auth/profile/")
+    data = response.json()
+
+    assert response.status_code == 200
+    assert data["first_name"] == "test"
+    assert data["last_name"] == "test2"
+    assert data["email"] == "test_test2@email.com"

@@ -92,3 +92,10 @@ class UserLoginSerializers(serializers.ModelSerializer):
             "access": tokens["token"],
             "refresh": tokens["refresh"],
         }
+
+
+class UserProfileSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ["id", "email", "first_name", "last_name", "last_login", "date_joined"]
+        write_only_fields = ["password", "groups"]

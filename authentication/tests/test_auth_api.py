@@ -1,7 +1,9 @@
 from django.test import Client
+from django.test.client import MULTIPART_CONTENT
 
 from authentication.tests.factories.user_factory import UserFactory
 from authentication.models import User
+from django.contrib.auth.models import Group
 import pytest
 
 
@@ -149,3 +151,43 @@ def test_retrieve_user_profile():
     assert data["first_name"] == "test"
     assert data["last_name"] == "test2"
     assert data["email"] == "test_test2@email.com"
+    assert data.get("password") is None
+
+
+@pytest.mark.django_db
+def test_patch_profile_details():
+    """
+    Test patch user profile
+    """
+    content_type = MULTIPART_CONTENT
+    mock_logged_in_user = UserFactory(
+        email="test_test2@email.com",
+        first_name="test",
+        last_name="test2",
+        groups=Group.objects.all(),
+    )
+    user_token = mock_logged_in_user.tokens()["token"]
+    client = Client(HTTP_AUTHORIZATION=f"Bearer {user_token}")
+    modified_data = {
+        "first_name": "modified_name1",
+        "last_name": "modified_name2",
+        "password": "test2",
+    }
+
+    data = client._encode_json({} if not modified_data else modified_data, content_type)
+    encoded_data = client._encode_data(data, content_type)
+    response = client.generic(
+        "PATCH",
+        "/v1/auth/profile/",
+        encoded_data,
+        content_type=content_type,
+        secure=False,
+        enctype="multipart/form-data",
+    )
+
+    modified_user = User.objects.first()
+
+    assert response.status_code == 204
+    assert modified_user.first_name == "modified_name1"
+    assert modified_user.last_name == "modified_name2"
+    assert modified_user.check_password("test2") is True

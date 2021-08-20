@@ -97,5 +97,24 @@ class UserLoginSerializers(serializers.ModelSerializer):
 class UserProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ["id", "email", "first_name", "last_name", "last_login", "date_joined"]
+        fields = [
+            "id",
+            "email",
+            "first_name",
+            "last_name",
+            "last_login",
+            "date_joined",
+            "password",
+        ]
         write_only_fields = ["password", "groups"]
+
+    def __init__(self, *args, **kwargs):
+        fields = kwargs.pop("fields", None)
+
+        super(UserProfileSerializer, self).__init__(*args, **kwargs)
+
+        if fields is not None:
+            allowed = set(fields)
+            existing = set(self.fields)
+            for field_name in existing - allowed:
+                self.fields.pop(field_name)

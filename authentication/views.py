@@ -9,7 +9,6 @@ from .serializers import (
     SupplierSerializer,
     UserProfileSerializer,
 )
-
 from rest_framework.response import Response
 from rest_framework import status
 
@@ -65,5 +64,26 @@ class UserProfileView(GenericAPIView):
     ]
 
     def get(self, request):
-        serializer = self.get_serializer(request.user)
+        serializer = self.get_serializer(
+            request.user,
+            fields=(
+                "id",
+                "email",
+                "first_name",
+                "last_name",
+                "last_login",
+                "date_joined",
+            ),
+        )
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+    def patch(self, request):
+        serializer = UserProfileSerializer(
+            request.user, data=request.data, partial=True
+        )
+        serializer.is_valid(raise_exception=True)
+        password = serializer.validated_data.pop("password", None)
+        if password:
+            request.user.set_password(password)
+        serializer.save()
+        return Response(status=status.HTTP_204_NO_CONTENT)

@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from orders.tests.factories.order_item_factory import OrderItemFactory
 from orders.tests.factories.order_factory import OrderFactory
 from orders.models import OrderItem, Order
@@ -17,12 +19,46 @@ def test_list_all_orders_with_empty_database(logged_in_client):
 
 
 @pytest.mark.django_db
+def test_list_all_orders_sorted_by_date_added(logged_in_client, logged_in_user):
+    customer_order = OrderFactory(customer=logged_in_user)
+    date_format = "%Y-%m-%d"
+    first_order_date = "2021-11-20"
+    second_order_date = "2021-11-25"
+    third_order_date = "2021-11-26"
+
+    OrderItemFactory(
+        order=customer_order,
+        date_added=datetime.strptime(first_order_date, date_format),
+    )
+    OrderItemFactory(
+        order=customer_order,
+        date_added=datetime.strptime(second_order_date, date_format),
+    )
+    OrderItemFactory(
+        order=customer_order,
+        date_added=datetime.strptime(third_order_date, date_format),
+    )
+
+    response = logged_in_client.get("/v1/orders/")
+    response_data = response.json()
+    sorted_dates = [
+        order_item["date_added"] for order_item in response_data["products"]
+    ]
+    assert sorted_dates == [
+        "2021-11-26T00:00:00Z",
+        "2021-11-25T00:00:00Z",
+        "2021-11-20T00:00:00Z",
+    ]
+
+
+@pytest.mark.django_db
 def test_list_all_orders(logged_in_client, logged_in_user):
     """
     Test list all orders
     """
     customer_order = OrderFactory(id=1, customer=logged_in_user)
-    order_item = OrderItemFactory(order=customer_order)
+    product = ProductFactory(name="Product 0")
+    order_item = OrderItemFactory(id=1, order=customer_order, product=product)
 
     response = logged_in_client.get("/v1/orders/")
     response_data = response.json()
@@ -160,3 +196,43 @@ def test_multiple_order_items_should_not_delete_main_order(logged_in_user):
     OrderItemFactory.create_batch(5)
     OrderItem.objects.first().delete()
     assert OrderItem.objects.count() == 4 and Order.objects.count() == 4
+
+
+@pytest.mark.django_db
+def test_update_cart_response_sorted_by_date_added(logged_in_client, logged_in_user):
+    order = OrderFactory(customer=logged_in_user)
+    date_format = "%Y-%m-%d"
+    first_order_date = "2021-11-20"
+    second_order_date = "2021-11-25"
+    third_order_date = "2021-11-26"
+
+    OrderItemFactory(
+        date_added=datetime.strptime(second_order_date, date_format),
+        order=order,
+        quantity=1,
+    )
+    OrderItemFactory(
+        date_added=datetime.strptime(third_order_date, date_format),
+        order=order,
+        quantity=1,
+    )
+    first_order = OrderItemFactory(
+        date_added=datetime.strptime(first_order_date, date_format),
+        order=order,
+        quantity=1,
+    )
+    product_id = first_order.product.id
+
+    data = {"productId": product_id, "action": "add"}
+
+    response = logged_in_client.post(f"/v1/orders/update-cart/", data=data)
+    response_data = response.json()
+    sorted_dates = [
+        order_item["date_added"] for order_item in response_data["products"]
+    ]
+
+    assert sorted_dates == [
+        "2021-11-26T00:00:00Z",
+        "2021-11-25T00:00:00Z",
+        "2021-11-20T00:00:00Z",
+    ]

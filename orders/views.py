@@ -37,7 +37,9 @@ class OrderViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
         resp = {
             "total_items": order.get_cart_items,
             "total_amount": order.get_cart_total,
-            "products": serializer.data,
+            "products": sorted(
+                serializer.data, key=lambda x: x["date_added"], reverse=True
+            ),
         }
 
         return Response(resp)
@@ -85,7 +87,9 @@ class OrderViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
         resp = {
             "total_items": order.get_cart_items,
             "total_amount": order.get_cart_total,
-            "products": serializer.data,
+            "products": sorted(
+                serializer.data, key=lambda x: x["date_added"], reverse=True
+            ),
         }
 
         return Response(data=resp, status=200)

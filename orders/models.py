@@ -1,3 +1,4 @@
+from django.utils import timezone
 from django.db import models
 from authentication.models import User
 from products.models import Product
@@ -46,7 +47,7 @@ class OrderItem(models.Model):
     product = models.ForeignKey(Product, on_delete=models.SET_NULL, null=True)
     order = models.ForeignKey(Order, on_delete=models.SET_NULL, null=True)
     quantity = models.IntegerField(default=0, null=True)
-    date_added = models.DateTimeField(auto_now_add=True)
+    date_added = models.DateTimeField(default=timezone.now, editable=False)
 
     def __str__(self):
         return str(self.id)

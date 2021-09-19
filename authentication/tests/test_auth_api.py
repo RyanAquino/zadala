@@ -142,7 +142,7 @@ def test_retrieve_user_profile():
     mock_logged_in_user = UserFactory(
         email="test_test2@email.com", first_name="test", last_name="test2"
     )
-    user_token = mock_logged_in_user.tokens()["token"]
+    user_token = mock_logged_in_user.tokens().token
     client = Client(HTTP_AUTHORIZATION=f"Bearer {user_token}")
     response = client.get("/v1/auth/profile/")
     data = response.json()
@@ -166,7 +166,7 @@ def test_patch_profile_details():
         last_name="test2",
         groups=Group.objects.all(),
     )
-    user_token = mock_logged_in_user.tokens()["token"]
+    user_token = mock_logged_in_user.tokens().token
     client = Client(HTTP_AUTHORIZATION=f"Bearer {user_token}")
     modified_data = {
         "first_name": "modified_name1",

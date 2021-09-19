@@ -6,6 +6,7 @@ from django.contrib.auth.models import (
     PermissionsMixin,
 )
 from rest_framework_simplejwt.tokens import RefreshToken
+from authentication.validators import UserTokens
 
 
 class UserManager(BaseUserManager):
@@ -57,9 +58,11 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     objects = UserManager()
 
-    def tokens(self):
+    def tokens(self) -> UserTokens:
         refresh = RefreshToken.for_user(self)
-        return {"refresh": str(refresh), "token": str(refresh.access_token)}
+        return UserTokens(
+            **{"refresh": str(refresh), "token": str(refresh.access_token)}
+        )
 
     def __str__(self):
         return self.email

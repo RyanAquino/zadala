@@ -17,7 +17,10 @@ from authentication.permissions import (
 from rest_framework import mixins, viewsets
 from rest_framework.decorators import action
 from rest_condition import Or
+
+from orders.validators import OrdersList
 from products.models import Product
+from rest_framework import status
 import datetime
 
 
@@ -42,7 +45,7 @@ class OrderViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
             ),
         }
 
-        return Response(resp)
+        return Response(data=OrdersList(**resp).dict())
 
     @action(
         detail=False,
@@ -92,7 +95,7 @@ class OrderViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
             ),
         }
 
-        return Response(data=resp, status=200)
+        return Response(data=OrdersList(**resp).dict(), status=status.HTTP_201_CREATED)
 
     @action(
         detail=False,
@@ -118,12 +121,14 @@ class OrderViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
             shipping = ShippingAddress.objects.create(
                 customer=customer,
                 order=order,
-                address=request_data.data["address"],
-                city=request_data.data["city"],
-                state=request_data.data["state"],
-                zipcode=request_data.data["zipcode"],
+                address=request_data.validated_data["address"],
+                city=request_data.validated_data["city"],
+                state=request_data.validated_data["state"],
+                zipcode=request_data.validated_data["zipcode"],
             )
             shipping.save()
 
-            return Response(ShippingAddressSerializer(shipping).data, status=201)
-        return Response("Order not found", status=400)
+            return Response(
+                ShippingAddressSerializer(shipping).data, status=status.HTTP_201_CREATED
+            )
+        return Response("Order not found", status=status.HTTP_400_BAD_REQUEST)

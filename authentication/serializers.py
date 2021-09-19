@@ -2,6 +2,7 @@ from rest_framework import serializers
 from authentication.models import User
 from django.contrib import auth
 from rest_framework.exceptions import AuthenticationFailed
+from authentication.validators import UserLogin
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -74,7 +75,7 @@ class UserLoginSerializers(serializers.ModelSerializer):
         model = User
         fields = ["email", "password", "access", "refresh", "first_name", "last_name"]
 
-    def validate(self, attrs):
+    def validate(self, attrs) -> UserLogin:
         email = attrs.get("email", "")
         password = attrs.get("password", "")
 
@@ -85,13 +86,15 @@ class UserLoginSerializers(serializers.ModelSerializer):
 
         tokens = user.tokens()
 
-        return {
-            "email": user.email,
-            "first_name": user.first_name,
-            "last_name": user.last_name,
-            "access": tokens["token"],
-            "refresh": tokens["refresh"],
-        }
+        return UserLogin(
+            **{
+                "email": user.email,
+                "first_name": user.first_name,
+                "last_name": user.last_name,
+                "access": tokens.token,
+                "refresh": tokens.refresh,
+            }
+        )
 
 
 class UserProfileSerializer(serializers.ModelSerializer):

@@ -131,7 +131,7 @@ def test_update_cart(logged_in_client):
     response_data = response.json()
     order_items = response_data["products"]
 
-    assert response.status_code == 200
+    assert response.status_code == 201
     assert response_data["total_items"] == 1
     assert response_data["total_amount"] == 35
     assert len(order_items) == 1
@@ -142,7 +142,7 @@ def test_update_cart(logged_in_client):
     response_data = response.json()
     order_items = response_data["products"]
 
-    assert response.status_code == 200
+    assert response.status_code == 201
     assert response_data["total_items"] == 0
     assert response_data["total_amount"] == 0
     assert len(order_items) == 0

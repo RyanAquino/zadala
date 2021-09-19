@@ -7,7 +7,7 @@ from django.contrib.auth.models import Group
 
 @pytest.fixture
 def logged_in_client(logged_in_user):
-    user_token = logged_in_user.tokens()["token"]
+    user_token = logged_in_user.tokens().token
     return Client(HTTP_AUTHORIZATION=f"Bearer {user_token}")
 
 

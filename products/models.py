@@ -2,6 +2,9 @@ from django.conf import settings
 from django.contrib.postgres.indexes import GinIndex, OpClass
 from django.db import models
 from django.db.models.functions import Upper
+from django.dispatch import receiver
+from django.db.models.signals import post_save
+from django.core.cache import cache
 
 from categories.models import Category
 
@@ -34,3 +37,11 @@ class Product(models.Model):
 
     def __str__(self):
         return self.name
+
+
+@receiver(post_save, sender="products.Product")
+def refresh_cache(sender, instance: Product, **kwargs):
+    product_cache = cache.keys("products_*")
+
+    for prod_cache in product_cache:
+        cache.delete(prod_cache)

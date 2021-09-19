@@ -90,3 +90,19 @@ class UserProfileView(GenericAPIView):
             request.user.set_password(password)
         serializer.save()
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+from rest_framework.viewsets import ViewSet
+from django.utils.decorators import method_decorator
+from django.views.decorators.cache import cache_page
+from zadalaAPI.settings import CACHE_TTL
+from rest_framework.permissions import AllowAny
+
+
+class UserViewSet(ViewSet):
+    permission_classes = [AllowAny]
+
+    @method_decorator(cache_page(CACHE_TTL))
+    def list(self, request, format=None):
+        content = {"user_feed": "test cache"}
+        return Response(content)

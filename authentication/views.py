@@ -1,16 +1,16 @@
 from rest_condition import Or
+from rest_framework import status
 from rest_framework.generics import GenericAPIView
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
 
 from .permissions import CustomerAccessPermission, SupplierAccessPermission
 from .serializers import (
-    UserSerializer,
-    UserLoginSerializers,
     SupplierSerializer,
+    UserLoginSerializers,
     UserProfileSerializer,
+    UserSerializer,
 )
-from rest_framework.response import Response
-from rest_framework import status
 
 
 class UserRegisterView(GenericAPIView):

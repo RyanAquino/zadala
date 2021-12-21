@@ -1,10 +1,10 @@
+import pytest
+from django.contrib.auth.models import Group
 from django.test import Client
 from django.test.client import MULTIPART_CONTENT
 
-from authentication.tests.factories.user_factory import UserFactory
 from authentication.models import User
-from django.contrib.auth.models import Group
-import pytest
+from authentication.tests.factories.user_factory import UserFactory
 
 
 @pytest.mark.django_db

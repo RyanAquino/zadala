@@ -1,8 +1,9 @@
 import pytest
-from authentication.tests.factories.user_factory import UserFactory
+from django.contrib.auth.models import Group
 from django.test.client import Client
 from pytest_django.lazy_django import skip_if_no_django
-from django.contrib.auth.models import Group
+
+from authentication.tests.factories.user_factory import UserFactory
 
 
 @pytest.fixture

@@ -1,8 +1,10 @@
-from orders.models import Order
-from factory.django import DjangoModelFactory
-from authentication.tests.factories.user_factory import UserFactory
-import factory
 import datetime
+
+import factory
+from factory.django import DjangoModelFactory
+
+from authentication.tests.factories.user_factory import UserFactory
+from orders.models import Order
 
 
 class OrderFactory(DjangoModelFactory):

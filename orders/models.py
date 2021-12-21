@@ -1,9 +1,10 @@
-from django.utils import timezone
 from django.db import models
-from authentication.models import User
-from products.models import Product
 from django.db.models.signals import post_delete
 from django.dispatch import receiver
+from django.utils import timezone
+
+from authentication.models import User
+from products.models import Product
 
 
 class Order(models.Model):

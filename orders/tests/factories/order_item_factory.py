@@ -1,9 +1,11 @@
-from orders.models import OrderItem
-from products.tests.factories.product_factory import ProductFactory
-from orders.tests.factories.order_factory import OrderFactory
-from factory.django import DjangoModelFactory
-import factory
 import datetime
+
+import factory
+from factory.django import DjangoModelFactory
+
+from orders.models import OrderItem
+from orders.tests.factories.order_factory import OrderFactory
+from products.tests.factories.product_factory import ProductFactory
 
 
 class OrderItemFactory(DjangoModelFactory):

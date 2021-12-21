@@ -1,10 +1,10 @@
 from datetime import datetime
 
-from orders.tests.factories.order_item_factory import OrderItemFactory
-from orders.tests.factories.order_factory import OrderFactory
-from orders.models import OrderItem, Order
 import pytest
 
+from orders.models import Order, OrderItem
+from orders.tests.factories.order_factory import OrderFactory
+from orders.tests.factories.order_item_factory import OrderItemFactory
 from products.tests.factories.product_factory import ProductFactory
 
 

@@ -1,7 +1,8 @@
 import pytest
-from products.tests.factories.product_factory import ProductFactory
-from products.models import Product
 from django.test.client import MULTIPART_CONTENT
+
+from products.models import Product
+from products.tests.factories.product_factory import ProductFactory
 
 
 @pytest.mark.django_db

@@ -1,7 +1,8 @@
-from rest_framework import serializers
-from authentication.models import User
 from django.contrib import auth
+from rest_framework import serializers
 from rest_framework.exceptions import AuthenticationFailed
+
+from authentication.models import User
 from authentication.validators import UserLogin
 
 

@@ -1,7 +1,8 @@
-from authentication.models import User
+import factory
 from factory import PostGenerationMethodCall
 from factory.django import DjangoModelFactory
-import factory
+
+from authentication.models import User
 
 
 class UserFactory(DjangoModelFactory):

@@ -1,5 +1,5 @@
-from django.contrib.auth.models import Group
 import factory
+from django.contrib.auth.models import Group
 
 
 class CustomersGroupFactory(factory.django.DjangoModelFactory):

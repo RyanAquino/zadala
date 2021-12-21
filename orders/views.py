@@ -1,27 +1,26 @@
-from rest_framework.generics import get_object_or_404
+import datetime
 
-from orders.exceptions import UnprocessableEntity
-from orders.models import Order, OrderItem, ShippingAddress
-from rest_framework.response import Response
-from orders.serializers import (
-    OrderItemSerializer,
-    OrderSerializer,
-    UpdateCartSerializer,
-    ShippingAddressSerializer,
-)
+from rest_condition import Or
+from rest_framework import mixins, status, viewsets
+from rest_framework.decorators import action
+from rest_framework.generics import get_object_or_404
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
+
 from authentication.permissions import (
     CustomerAccessPermission,
     SupplierAccessPermission,
 )
-from rest_framework import mixins, viewsets
-from rest_framework.decorators import action
-from rest_condition import Or
-
+from orders.exceptions import UnprocessableEntity
+from orders.models import Order, OrderItem, ShippingAddress
+from orders.serializers import (
+    OrderItemSerializer,
+    OrderSerializer,
+    ShippingAddressSerializer,
+    UpdateCartSerializer,
+)
 from orders.validators import OrdersList
 from products.models import Product
-from rest_framework import status
-import datetime
 
 
 class OrderViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):

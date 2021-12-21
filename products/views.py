@@ -1,11 +1,13 @@
-from products.models import Product
-from rest_framework.permissions import IsAuthenticatedOrReadOnly
-from .serializers import ProductSerializer
-from authentication.permissions import SupplierAccessPermission
-from rest_framework.viewsets import ModelViewSet
-from rest_framework.parsers import MultiPartParser
-from rest_framework.pagination import PageNumberPagination
 from rest_framework import filters
+from rest_framework.pagination import PageNumberPagination
+from rest_framework.parsers import MultiPartParser
+from rest_framework.permissions import IsAuthenticatedOrReadOnly
+from rest_framework.viewsets import ModelViewSet
+
+from authentication.permissions import SupplierAccessPermission
+from products.models import Product
+
+from .serializers import ProductSerializer
 
 
 class ProductViewSet(ModelViewSet):

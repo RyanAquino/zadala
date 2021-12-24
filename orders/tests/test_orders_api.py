@@ -150,8 +150,7 @@ def test_update_cart(logged_in_client):
 
 
 @pytest.mark.django_db
-@patch("django.core.mail.send_mail", lambda **kwargs: kwargs)
-@patch("validate_email.validate_email", lambda z, x: x)
+@patch("django_rq.enqueue", lambda *args: args)
 def test_process_order(logged_in_client, logged_in_user):
     """
     Test process order

@@ -7,8 +7,11 @@ database = {
     "PORT": "5432",
 }
 
-ZADALA_SECRET_KEY = "my-secret"
+redis_database = {
+    "REDIS_URL": "redis://localhost:6379/0",
+}
 
+ZADALA_SECRET_KEY = "my-secret"
 
 EMAIL_HOST_PROVIDER = "smtp.gmail.com"
 EMAIL_HOST_PORT = 587

@@ -12,7 +12,14 @@ https://docs.djangoproject.com/en/3.0/ref/settings/
 import datetime
 import os
 
-from zadala_config import ZADALA_SECRET_KEY, database
+from zadala_config import (
+    EMAIL_HOST_PASSWORD,
+    EMAIL_HOST_PORT,
+    EMAIL_HOST_PROVIDER,
+    EMAIL_HOST_USER,
+    ZADALA_SECRET_KEY,
+    database,
+)
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -68,11 +75,12 @@ CORS_ALLOW_CREDENTIALS = True
 STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
 ROOT_URLCONF = "zadalaAPI.urls"
+TEMPLATE_ROOT = os.path.join(BASE_DIR, "templates")
 
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [],
+        "DIRS": [TEMPLATE_ROOT],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
@@ -181,3 +189,10 @@ MEDIA_URL = "/images/"
 STATIC_URL = "/static/"
 MEDIA_ROOT = os.path.join(BASE_DIR, "static/images")
 STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
+
+EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+EMAIL_HOST = os.environ.get("EMAIL_HOST_PROVIDER", EMAIL_HOST_PROVIDER)
+EMAIL_PORT = os.environ.get("EMAIL_HOST_PORT", EMAIL_HOST_PORT)
+EMAIL_HOST_USER = os.environ.get("EMAIL_HOST_USER", EMAIL_HOST_USER)
+EMAIL_HOST_PASSWORD = os.environ.get("EMAIL_HOST_PASSWORD", EMAIL_HOST_PASSWORD)
+EMAIL_USE_TLS = True

@@ -44,6 +44,11 @@ python manage.py createsuperuser
 python manage.py runserver
 ```
 
+#### Access on browser
+```
+http://localhost:8000/api-docs
+```
+
 ### Setup with Docker (Alternative)
 ```
 docker-compose up -d

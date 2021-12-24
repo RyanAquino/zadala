@@ -1,4 +1,5 @@
-import datetime
+from datetime import datetime
+from uuid import uuid4
 
 from rest_condition import Or
 from rest_framework import mixins, status, viewsets
@@ -105,7 +106,8 @@ class OrderViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
     )
     def process_order(self, request):
         request_data = self.get_serializer(data=request.data)
-        transaction_id = datetime.datetime.now().timestamp()
+        transaction_id = str(uuid4())
+        transaction_timestamp = datetime.now().strftime("%b %d, %Y %H:%M")
         customer = request.user
         self.check_object_permissions(self.request, customer)
 
@@ -116,18 +118,37 @@ class OrderViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
         order.complete = True
         order.save()
 
-        if order.shipping:
-            shipping = ShippingAddress.objects.create(
-                customer=customer,
-                order=order,
-                address=request_data.validated_data["address"],
-                city=request_data.validated_data["city"],
-                state=request_data.validated_data["state"],
-                zipcode=request_data.validated_data["zipcode"],
-            )
-            shipping.save()
+        if not order.shipping:
+            return Response("Order not found", status=status.HTTP_400_BAD_REQUEST)
 
-            return Response(
-                ShippingAddressSerializer(shipping).data, status=status.HTTP_201_CREATED
-            )
-        return Response("Order not found", status=status.HTTP_400_BAD_REQUEST)
+        shipping = ShippingAddress.objects.create(
+            customer=customer,
+            order=order,
+            address=request_data.validated_data["address"],
+            city=request_data.validated_data["city"],
+            state=request_data.validated_data["state"],
+            zipcode=request_data.validated_data["zipcode"],
+        )
+        shipping.save()
+
+        Order.send_email_notification(
+            customer.email,
+            "invoice_email_template.html",
+            f"Order Being Processed: {order.transaction_id}",
+            {
+                "user_first_name": customer.first_name,
+                "user_last_name": customer.last_name,
+                "shipping_address": shipping.address,
+                "shipping_city": shipping.city,
+                "shipping_state": shipping.state,
+                "shipping_zipcode": shipping.zipcode,
+                "invoice_code": transaction_id,
+                "order_items": order.order_items,
+                "order": order,
+                "date_ordered": transaction_timestamp,
+            },
+        )
+
+        return Response(
+            ShippingAddressSerializer(shipping).data, status=status.HTTP_201_CREATED
+        )

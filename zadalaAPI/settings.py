@@ -19,6 +19,7 @@ from zadala_config import (
     EMAIL_HOST_USER,
     ZADALA_SECRET_KEY,
     database,
+    redis_database,
 )
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
@@ -53,6 +54,7 @@ INSTALLED_APPS = [
     "orders",
     "authentication",
     "rest_framework",
+    "django_rq",
 ]
 
 MIDDLEWARE = [
@@ -196,3 +198,17 @@ EMAIL_PORT = os.environ.get("EMAIL_HOST_PORT", EMAIL_HOST_PORT)
 EMAIL_HOST_USER = os.environ.get("EMAIL_HOST_USER", EMAIL_HOST_USER)
 EMAIL_HOST_PASSWORD = os.environ.get("EMAIL_HOST_PASSWORD", EMAIL_HOST_PASSWORD)
 EMAIL_USE_TLS = True
+
+RQ_QUEUES = {
+    "default": {
+        "URL": os.getenv("REDISTOGO_URL", redis_database["REDIS_URL"]),
+        "DEFAULT_TIMEOUT": 360,
+    },
+    "high": {
+        "URL": os.getenv("REDISTOGO_URL", redis_database["REDIS_URL"]),
+        "DEFAULT_TIMEOUT": 500,
+    },
+    "low": {
+        "URL": os.getenv("REDISTOGO_URL", redis_database["REDIS_URL"]),
+    },
+}

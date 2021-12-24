@@ -11,8 +11,10 @@ colorama==0.4.4
 coreapi==2.3.3
 coreschema==0.0.4
 coverage==5.3.1
+Deprecated==1.2.13
 Django==3.0.8
 django-cors-headers==3.7.0
+django-rq==2.5.1
 djangorestframework==3.11.0
 djangorestframework-simplejwt==4.4.0
 dnspython==2.1.0
@@ -51,9 +53,11 @@ pytest-cov==2.10.1
 pytest-django==3.9.0
 python-dateutil==2.8.1
 pytz==2020.1
+redis==4.0.2
 regex==2020.7.14
 requests==2.26.0
 rest-condition==1.0.3
+rq==1.10.1
 ruamel.yaml==0.16.12
 ruamel.yaml.clib==0.2.2
 six==1.15.0
@@ -65,4 +69,5 @@ typing-extensions==3.7.4.2
 uritemplate==3.0.1
 urllib3==1.25.10
 whitenoise==5.2.0
+wrapt==1.13.3
 zipp==3.1.0

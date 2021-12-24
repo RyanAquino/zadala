@@ -1,15 +1,7 @@
-from typing import Dict
-
-from django.conf import settings
-from django.core.mail import send_mail
 from django.db import models
 from django.db.models.signals import post_delete
 from django.dispatch import receiver
-from django.template.loader import render_to_string
 from django.utils import timezone
-from django.utils.html import strip_tags
-from pydantic import EmailStr
-from validate_email import validate_email
 
 from authentication.models import User
 from products.models import Product
@@ -50,23 +42,6 @@ class Order(models.Model):
         items = self.order_items
         total = sum([item.quantity for item in items])
         return total
-
-    @staticmethod
-    def send_email_notification(
-        customer_email: EmailStr, template: str, subject: str, context_data: Dict
-    ):
-        if validate_email(email_address=customer_email, check_smtp=False):
-            html_message = render_to_string(template, context_data)
-            plain_message = strip_tags(html_message)
-
-            send_mail(
-                subject,
-                plain_message,
-                settings.EMAIL_HOST_USER,
-                [customer_email, settings.EMAIL_HOST_USER],
-                fail_silently=False,
-                html_message=html_message,
-            )
 
 
 class OrderItem(models.Model):

@@ -1,6 +1,7 @@
 from datetime import datetime
 from uuid import uuid4
 
+import django_rq
 from rest_condition import Or
 from rest_framework import mixins, status, viewsets
 from rest_framework.decorators import action
@@ -20,6 +21,7 @@ from orders.serializers import (
     ShippingAddressSerializer,
     UpdateCartSerializer,
 )
+from orders.tasks import send_email_notification
 from orders.validators import OrdersList
 from products.models import Product
 
@@ -129,9 +131,10 @@ class OrderViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
             state=request_data.validated_data["state"],
             zipcode=request_data.validated_data["zipcode"],
         )
-        shipping.save()
 
-        Order.send_email_notification(
+        shipping.save()
+        django_rq.enqueue(
+            send_email_notification,
             customer.email,
             "invoice_email_template.html",
             f"Order Being Processed: {order.transaction_id}",

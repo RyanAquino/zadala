@@ -8,3 +8,9 @@ database = {
 }
 
 ZADALA_SECRET_KEY = "my-secret"
+
+
+EMAIL_HOST_PROVIDER = "smtp.gmail.com"
+EMAIL_HOST_PORT = 587
+EMAIL_HOST_USER = "gmail email"
+EMAIL_HOST_PASSWORD = "gmail password"

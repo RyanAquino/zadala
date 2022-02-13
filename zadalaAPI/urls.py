@@ -41,6 +41,7 @@ urlpatterns = [
     path("v1/products/", include("products.urls")),
     path("v1/orders/", include("orders.urls")),
     path("v1/auth/", include("authentication.urls")),
+    path("v1/social-auth/", include("social_auth.urls")),
     path("v1/auth/token/refresh/", TokenRefreshView.as_view(), name="token_refresh"),
     path(
         "api-docs",

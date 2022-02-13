@@ -17,6 +17,7 @@ from zadala_config import (
     EMAIL_HOST_PORT,
     EMAIL_HOST_PROVIDER,
     EMAIL_HOST_USER,
+    GOOGLE_CLIENT_ID,
     ZADALA_SECRET_KEY,
     database,
     redis_database,
@@ -55,6 +56,7 @@ INSTALLED_APPS = [
     "authentication",
     "rest_framework",
     "django_rq",
+    "social_auth",
 ]
 
 MIDDLEWARE = [
@@ -212,3 +214,5 @@ RQ_QUEUES = {
         "URL": os.getenv("REDISTOGO_URL", redis_database["REDIS_URL"]),
     },
 }
+
+GOOGLE_CLIENT_ID = os.environ.get("GOOGLE_CLIENT_ID", GOOGLE_CLIENT_ID)

@@ -1,6 +1,22 @@
 version: '3.8'
 # docker-compose up && docker-compose rm -fsv # run and remove on exit
 
+x-common-variables: &common-variables
+  DB_ENGINE: django.db.backends.postgresql
+  DB_NAME: zadala
+  DB_USER: postgres
+  DB_PASS: 1
+  DB_HOST: db
+  DB_PORT: 5432
+  EMAIL_HOST_USER:
+  EMAIL_HOST_PASSWORD:
+  EMAIL_HOST_PORT: 587
+  EMAIL_HOST_PROVIDER: smtp.gmail.com
+  SECRET_KEY: my-secret
+  GOOGLE_CLIENT_ID:
+  GOOGLE_CLIENT_SECRET:
+  REDISTOGO_URL: redis://redis:6379/0
+
 services:
   db:
     image: postgres
@@ -45,15 +61,17 @@ services:
       - "8000:8000"
     expose:
       - 8000
-    environment:
-      - DB_NAME=zadala
-      - DB_USER=postgres
-      - DB_PASS=1
-      - DB_HOST=db
-      - DB_PORT=5432
-      - ENV=prod
-      - SECRET_KEY=my-secret
+    environment: *common-variables
     command: sh -c "python manage.py migrate && python manage.py collectstatic --noinput && python manage.py runserver 0.0.0.0:8000"
     depends_on:
       db:
         condition: service_healthy
+
+  zadala-rq-worker:
+    container_name: zadala-rq-worker
+    restart: always
+    build: .
+    environment: *common-variables
+    command: sh -c "python manage.py rqworker high default low"
+    depends_on:
+      - redis

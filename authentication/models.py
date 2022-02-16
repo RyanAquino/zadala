@@ -7,7 +7,7 @@ from django.contrib.auth.models import (
 from django.db import models
 from rest_framework_simplejwt.tokens import RefreshToken
 
-from authentication.validators import UserTokens
+from authentication.validators import AuthProviders, UserTokens
 
 
 class UserManager(BaseUserManager):
@@ -49,6 +49,13 @@ class User(AbstractBaseUser, PermissionsMixin):
     password = models.CharField(max_length=255)
     last_login = models.DateTimeField(auto_now=True)
     date_joined = models.DateTimeField(auto_now_add=True)
+    auth_provider = models.CharField(
+        max_length=255,
+        blank=False,
+        null=False,
+        default=AuthProviders.email.value,
+        choices=AuthProviders.valid_providers(),
+    )
 
     is_staff = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)

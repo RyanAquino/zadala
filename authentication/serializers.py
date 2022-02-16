@@ -85,6 +85,9 @@ class UserLoginSerializers(serializers.ModelSerializer):
         if not user:
             raise AuthenticationFailed("Invalid email/password")
 
+        if user.auth_provider != "email":
+            raise AuthenticationFailed("Please login using your login provider.")
+
         tokens = user.tokens()
 
         return UserLogin(
@@ -107,6 +110,7 @@ class UserProfileSerializer(serializers.ModelSerializer):
             "first_name",
             "last_name",
             "last_login",
+            "auth_provider",
             "date_joined",
             "password",
         ]

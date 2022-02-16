@@ -67,6 +67,7 @@ class UserProfileView(GenericAPIView):
                 "first_name",
                 "last_name",
                 "last_login",
+                "auth_provider",
                 "date_joined",
             ),
         )
@@ -78,7 +79,7 @@ class UserProfileView(GenericAPIView):
         )
         serializer.is_valid(raise_exception=True)
         password = serializer.validated_data.pop("password", None)
-        if password:
+        if password and request.user.auth_provider == "email":
             request.user.set_password(password)
         serializer.save()
         return Response(status=status.HTTP_204_NO_CONTENT)

@@ -82,6 +82,23 @@ def test_user_login(client):
 
 
 @pytest.mark.django_db
+def test_user_login_with_google_provider(client):
+    """
+    Test User login with email on existing OAuth user
+    """
+    user = UserFactory(
+        email="test@email.com", password="temp-password", auth_provider="google"
+    )
+    data = {"email": user.email, "password": "temp-password"}
+
+    response = client.post("/v1/auth/login/", data)
+    response_data = response.json()
+
+    assert response.status_code == 403
+    assert response_data == {"detail": "Please login using your login provider."}
+
+
+@pytest.mark.django_db
 def test_invalid_credentials_user_login(client):
     """
     Test Failed User login
@@ -151,6 +168,7 @@ def test_retrieve_user_profile():
     assert data["first_name"] == "test"
     assert data["last_name"] == "test2"
     assert data["email"] == "test_test2@email.com"
+    assert data["auth_provider"] == "email"
     assert data.get("password") is None
 
 
@@ -191,3 +209,40 @@ def test_patch_profile_details():
     assert modified_user.first_name == "modified_name1"
     assert modified_user.last_name == "modified_name2"
     assert modified_user.check_password("test2") is True
+
+
+@pytest.mark.django_db
+def test_patch_profile_password_of_oauth_user_should_not_update():
+    """
+    Test patch user profile password of an existing oauth user should not update the password
+    """
+    content_type = MULTIPART_CONTENT
+    mock_logged_in_user = UserFactory(
+        email="test_test2@email.com",
+        first_name="test",
+        last_name="test2",
+        auth_provider="google",
+        password="oauth-generated-password",
+        groups=Group.objects.all(),
+    )
+    user_token = mock_logged_in_user.tokens().token
+    client = Client(HTTP_AUTHORIZATION=f"Bearer {user_token}")
+    modified_data = {
+        "password": "oauth-modified-password",
+    }
+
+    data = client._encode_json({} if not modified_data else modified_data, content_type)
+    encoded_data = client._encode_data(data, content_type)
+    response = client.generic(
+        "PATCH",
+        "/v1/auth/profile/",
+        encoded_data,
+        content_type=content_type,
+        secure=False,
+        enctype="multipart/form-data",
+    )
+
+    modified_user = User.objects.first()
+
+    assert response.status_code == 204
+    assert modified_user.check_password("oauth-generated-password") is True

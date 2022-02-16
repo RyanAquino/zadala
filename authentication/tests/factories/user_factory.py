@@ -14,6 +14,7 @@ class UserFactory(DjangoModelFactory):
     last_name = "account"
     password = PostGenerationMethodCall("set_password", "password")
     is_active = True
+    auth_provider = "email"
 
     @factory.post_generation
     def groups(self, create, extracted, **kwargs):

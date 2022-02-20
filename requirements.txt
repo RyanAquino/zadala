@@ -54,7 +54,7 @@ py3-validate-email==1.0.5
 pyasn1==0.4.8
 pyasn1-modules==0.2.8
 pycodestyle==2.6.0
-pydantic==1.6.1
+pydantic==1.6.2
 pyflakes==2.2.0
 PyJWT==1.7.1
 pyparsing==2.4.7

@@ -221,3 +221,27 @@ RQ_QUEUES = {
 
 GOOGLE_CLIENT_ID = os.environ.get("GOOGLE_CLIENT_ID", GOOGLE_CLIENT_ID)
 GOOGLE_CLIENT_SECRET = os.environ.get("GOOGLE_CLIENT_SECRET", GOOGLE_CLIENT_SECRET)
+
+# Django 3.2
+DEFAULT_AUTO_FIELD = "django.db.models.AutoField"
+
+# https://docs.djangoproject.com/en/4.0/ref/settings/#std:setting-SESSION_COOKIE_SECURE
+SESSION_COOKIE_SECURE = (
+    True
+    if "SESSION_COOKIE_SECURE" in os.environ and os.environ["SESSION_COOKIE_SECURE"]
+    else False
+)
+
+# https://docs.djangoproject.com/en/4.0/ref/settings/#std:setting-SECURE_SSL_REDIRECT
+SECURE_SSL_REDIRECT = (
+    True
+    if "SECURE_SSL_REDIRECT" in os.environ and os.environ["SECURE_SSL_REDIRECT"]
+    else False
+)
+
+# https://docs.djangoproject.com/en/4.0/ref/settings/#std:setting-CSRF_COOKIE_SECURE
+CSRF_COOKIE_SECURE = (
+    True
+    if "CSRF_COOKIE_SECURE" in os.environ and os.environ["CSRF_COOKIE_SECURE"]
+    else False
+)

@@ -1,6 +1,5 @@
-import datetime
-
 import factory
+from django.utils import timezone
 from factory.django import DjangoModelFactory
 
 from orders.models import OrderItem
@@ -15,4 +14,4 @@ class OrderItemFactory(DjangoModelFactory):
     product = factory.SubFactory(ProductFactory)
     order = factory.SubFactory(OrderFactory)
     quantity = 35
-    date_added = factory.LazyFunction(datetime.datetime.now)
+    date_added = factory.LazyFunction(timezone.now)

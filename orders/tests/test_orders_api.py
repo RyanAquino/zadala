@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timezone
 from unittest.mock import patch
 
 import pytest
@@ -10,13 +10,17 @@ from products.tests.factories.product_factory import ProductFactory
 
 
 @pytest.mark.django_db
-def test_list_all_orders_with_empty_database(logged_in_client):
+def test_list_all_orders_with_empty_database(logged_in_client, logged_in_user):
     """
-    Test list all orders with empty database
+    Test list all orders with empty database should create initial order for user if an order still not existing
     """
     response = logged_in_client.get("/v1/orders/")
     assert response.status_code == 200, response.data
     assert response.json() == {"total_items": 0, "total_amount": 0, "products": []}
+    assert (
+        Order.objects.count() == 1
+        and Order.objects.first().customer_id == logged_in_user.id
+    )
 
 
 @pytest.mark.django_db
@@ -29,15 +33,21 @@ def test_list_all_orders_sorted_by_date_added(logged_in_client, logged_in_user):
 
     OrderItemFactory(
         order=customer_order,
-        date_added=datetime.strptime(first_order_date, date_format),
+        date_added=datetime.strptime(first_order_date, date_format).replace(
+            tzinfo=timezone.utc
+        ),
     )
     OrderItemFactory(
         order=customer_order,
-        date_added=datetime.strptime(second_order_date, date_format),
+        date_added=datetime.strptime(second_order_date, date_format).replace(
+            tzinfo=timezone.utc
+        ),
     )
     OrderItemFactory(
         order=customer_order,
-        date_added=datetime.strptime(third_order_date, date_format),
+        date_added=datetime.strptime(third_order_date, date_format).replace(
+            tzinfo=timezone.utc
+        ),
     )
 
     response = logged_in_client.get("/v1/orders/")
@@ -209,17 +219,23 @@ def test_update_cart_response_sorted_by_date_added(logged_in_client, logged_in_u
     third_order_date = "2021-11-26"
 
     OrderItemFactory(
-        date_added=datetime.strptime(second_order_date, date_format),
+        date_added=datetime.strptime(second_order_date, date_format).replace(
+            tzinfo=timezone.utc
+        ),
         order=order,
         quantity=1,
     )
     OrderItemFactory(
-        date_added=datetime.strptime(third_order_date, date_format),
+        date_added=datetime.strptime(third_order_date, date_format).replace(
+            tzinfo=timezone.utc
+        ),
         order=order,
         quantity=1,
     )
     first_order = OrderItemFactory(
-        date_added=datetime.strptime(first_order_date, date_format),
+        date_added=datetime.strptime(first_order_date, date_format).replace(
+            tzinfo=timezone.utc
+        ),
         order=order,
         quantity=1,
     )

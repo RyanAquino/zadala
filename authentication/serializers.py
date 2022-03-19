@@ -1,9 +1,10 @@
 from django.contrib import auth
+from django.contrib.auth.models import update_last_login
 from rest_framework import serializers
 from rest_framework.exceptions import AuthenticationFailed
 
 from authentication.models import User
-from authentication.validators import UserLogin
+from authentication.validators import AuthProviders, UserLogin
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -21,6 +22,7 @@ class UserSerializer(serializers.ModelSerializer):
             "is_superuser",
             "groups",
             "user_permissions",
+            "auth_provider",
         )
 
     def validate(self, attrs):
@@ -50,6 +52,7 @@ class SupplierSerializer(serializers.ModelSerializer):
             "is_superuser",
             "groups",
             "user_permissions",
+            "auth_provider",
         )
 
     def validate(self, attrs):
@@ -85,10 +88,11 @@ class UserLoginSerializers(serializers.ModelSerializer):
         if not user:
             raise AuthenticationFailed("Invalid email/password")
 
-        if user.auth_provider != "email":
+        if user.auth_provider != AuthProviders.email.value:
             raise AuthenticationFailed("Please login using your login provider.")
 
         tokens = user.tokens()
+        update_last_login(sender=None, user=user)
 
         return UserLogin(
             **{
@@ -102,6 +106,11 @@ class UserLoginSerializers(serializers.ModelSerializer):
 
 
 class UserProfileSerializer(serializers.ModelSerializer):
+    password = serializers.CharField(max_length=65, min_length=8)
+    email = serializers.EmailField(max_length=255, min_length=4)
+    first_name = serializers.CharField(max_length=255, min_length=2)
+    last_name = serializers.CharField(max_length=255, min_length=2)
+
     class Meta:
         model = User
         fields = [
@@ -115,6 +124,7 @@ class UserProfileSerializer(serializers.ModelSerializer):
             "password",
         ]
         write_only_fields = ["password", "groups"]
+        read_only_fields = ["auth_provider"]
 
     def __init__(self, *args, **kwargs):
         fields = kwargs.pop("fields", None)

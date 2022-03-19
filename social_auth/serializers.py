@@ -8,7 +8,7 @@ from social_auth.google import Google
 class GoogleSocialAuthSerializer(serializers.Serializer):
     auth_token = serializers.CharField()
 
-    def validate_auth_token(self, auth_token):
+    def validate_auth_token(self, auth_token: str):
         try:
             user_data = Google.validate(auth_token)
         except ValueError:

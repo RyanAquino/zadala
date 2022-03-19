@@ -1,3 +1,5 @@
+from datetime import datetime
+
 import pytest
 from django.contrib.auth.models import Group
 from django.test import Client
@@ -189,7 +191,7 @@ def test_patch_profile_details():
     modified_data = {
         "first_name": "modified_name1",
         "last_name": "modified_name2",
-        "password": "test2",
+        "password": "string123",
     }
 
     data = client._encode_json({} if not modified_data else modified_data, content_type)
@@ -208,7 +210,7 @@ def test_patch_profile_details():
     assert response.status_code == 204
     assert modified_user.first_name == "modified_name1"
     assert modified_user.last_name == "modified_name2"
-    assert modified_user.check_password("test2") is True
+    assert modified_user.check_password("string123") is True
 
 
 @pytest.mark.django_db
@@ -246,3 +248,23 @@ def test_patch_profile_password_of_oauth_user_should_not_update():
 
     assert response.status_code == 204
     assert modified_user.check_password("oauth-generated-password") is True
+
+
+@pytest.mark.django_db
+def test_login_should_update_last_login_date_time(client):
+    """
+    Test User login should update last login date time
+    """
+    user = UserFactory(last_login="2022-02-21 00:53:12.279437")
+    data = {"email": user.email, "password": "password"}
+
+    response = client.post("/v1/auth/login/", data)
+    current_login_time = datetime.today().replace(microsecond=0).timestamp()
+
+    assert response.status_code == 200
+    user.refresh_from_db()
+
+    user_last_login_second_timestamp = (
+        User.objects.first().last_login.replace(microsecond=0).timestamp()
+    )
+    assert user_last_login_second_timestamp == current_login_time

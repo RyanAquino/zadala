@@ -7,3 +7,6 @@ omit =
     */zadalaAPI/*
     manage.py
     */apps.py
+
+[report]
+show_missing = True

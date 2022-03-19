@@ -1,3 +1,4 @@
+from datetime import datetime
 from unittest.mock import patch
 
 import pytest
@@ -40,7 +41,9 @@ def test_social_login_on_existing_account(mocked_oauth_details, client):
     """
     test Social user login on an existing account should return tokens
     """
-    user = UserFactory(email="test@gmail.com", password="temp-oauth-password")
+    user = UserFactory(
+        email="test@gmail.com", password="temp-oauth-password", auth_provider="google"
+    )
     data = {"auth_token": "some-oauth-token"}
     mocked_oauth_details.return_value = {
         "iss": "accounts.google.com",
@@ -101,3 +104,60 @@ def test_google_validate_on_invalid_token():
     """
     with pytest.raises(ValueError):
         Google.validate("some-invalid-token")
+
+
+@pytest.mark.django_db
+@patch("google.oauth2.id_token.verify_oauth2_token")
+@patch("django.conf.settings.GOOGLE_CLIENT_ID", 1)
+@patch("django.conf.settings.GOOGLE_CLIENT_SECRET", "temp-oauth-password")
+def test_social_login_should_update_last_login_date_time(mocked_oauth_details, client):
+    """
+    Test OAuth User login should update last login date time
+    """
+    user = UserFactory(
+        last_login="2022-02-21 00:53:12.279437",
+        password="temp-oauth-password",
+        auth_provider="google",
+    )
+    data = {"auth_token": "some-oauth-token"}
+    mocked_oauth_details.return_value = {
+        "iss": "accounts.google.com",
+        "aud": 1,
+        "email": user.email,
+    }
+
+    response = client.post("/v1/social-auth/google/", data, format="json")
+    current_login_time = datetime.today().replace(microsecond=0).timestamp()
+
+    assert response.status_code == 200
+    user.refresh_from_db()
+
+    user_last_login_second_timestamp = (
+        User.objects.first().last_login.replace(microsecond=0).timestamp()
+    )
+    assert user_last_login_second_timestamp == current_login_time
+
+
+@pytest.mark.django_db
+@patch("google.oauth2.id_token.verify_oauth2_token")
+@patch("django.conf.settings.GOOGLE_CLIENT_ID", 1)
+@patch("django.conf.settings.GOOGLE_CLIENT_SECRET", "temp-oauth-password")
+def test_social_login_with_existing_email_user_provider(mocked_oauth_details, client):
+    """
+    Test OAuth User login should respond error if user exists and user auth provider is email
+    """
+    user = UserFactory(
+        password="temp-oauth-password",
+        auth_provider="email",
+    )
+    data = {"auth_token": "some-oauth-token"}
+    mocked_oauth_details.return_value = {
+        "iss": "accounts.google.com",
+        "aud": 1,
+        "email": user.email,
+    }
+
+    response = client.post("/v1/social-auth/google/", data, format="json")
+    assert response.status_code == 403 and response.json() == {
+        "email": "Please login using your provider"
+    }

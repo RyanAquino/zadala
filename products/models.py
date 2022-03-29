@@ -1,5 +1,7 @@
 from django.conf import settings
+from django.contrib.postgres.indexes import GinIndex, OpClass
 from django.db import models
+from django.db.models.functions import Upper
 
 
 class Product(models.Model):
@@ -16,6 +18,14 @@ class Product(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
     REQUIRED_FIELDS = "__all__"
+
+    class Meta:
+        indexes = [
+            GinIndex(
+                OpClass(Upper("name"), name="gin_trgm_ops"),
+                name="products_name_gin_index",
+            )
+        ]
 
     def __str__(self):
         return self.name

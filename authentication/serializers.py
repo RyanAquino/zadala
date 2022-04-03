@@ -1,4 +1,4 @@
-from django.contrib import auth
+from django.contrib.auth import user_logged_in
 from django.contrib.auth.models import update_last_login
 from rest_framework import serializers
 from rest_framework.exceptions import AuthenticationFailed
@@ -82,17 +82,22 @@ class UserLoginSerializers(serializers.ModelSerializer):
     def validate(self, attrs) -> UserLogin:
         email = attrs.get("email", "")
         password = attrs.get("password", "")
+        request = self.context.get("request")
 
-        user = auth.authenticate(email=email, password=password)
-
-        if not user:
+        try:
+            user = User.objects.get(email=email)
+        except User.DoesNotExist:
             raise AuthenticationFailed("Invalid email/password")
+        else:
+            if not user.check_password(password):
+                raise AuthenticationFailed("Invalid email/password")
 
         if user.auth_provider != AuthProviders.email.value:
             raise AuthenticationFailed("Please login using your login provider.")
 
         tokens = user.tokens()
         update_last_login(sender=None, user=user)
+        user_logged_in.send(sender=user.__class__, request=request, user=user)
 
         return UserLogin(
             **{

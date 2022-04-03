@@ -1,4 +1,5 @@
 from datetime import datetime
+from unittest.mock import patch
 
 import pytest
 from django.contrib.auth.models import Group
@@ -69,21 +70,6 @@ def test_supplier_register(logged_in_client):
 
 
 @pytest.mark.django_db
-def test_user_login(client):
-    """
-    Test User login
-    """
-    user = UserFactory(email="test@email.com")
-    data = {"email": user.email, "password": "password"}
-
-    response = client.post("/v1/auth/login/", data)
-    response_data = response.json()
-
-    assert response_data["email"] == "test@email.com" and str(user) == "test@email.com"
-    assert response.status_code == 200
-
-
-@pytest.mark.django_db
 def test_user_login_with_google_provider(client):
     """
     Test User login with email on existing OAuth user
@@ -101,7 +87,24 @@ def test_user_login_with_google_provider(client):
 
 
 @pytest.mark.django_db
-def test_invalid_credentials_user_login(client):
+@patch("botocore.client.BaseClient._make_api_call", lambda *args, **kwargs: None)
+def test_user_login(client):
+    """
+    Test User login
+    """
+    user = UserFactory(email="test@email.com")
+    data = {"email": user.email, "password": "password"}
+
+    response = client.post("/v1/auth/login/", data)
+    response_data = response.json()
+
+    assert response_data["email"] == "test@email.com" and str(user) == "test@email.com"
+    assert response.status_code == 200
+
+
+@pytest.mark.django_db
+@patch("botocore.client.BaseClient._make_api_call", lambda *args, **kwargs: None)
+def test_invalid_email_credentials_user_login(client):
     """
     Test Failed User login
     """
@@ -113,6 +116,21 @@ def test_invalid_credentials_user_login(client):
 
 
 @pytest.mark.django_db
+@patch("botocore.client.BaseClient._make_api_call", lambda *args, **kwargs: None)
+def test_invalid_password_credentials_user_login(client):
+    """
+    Test Failed User login
+    """
+    user = UserFactory()
+    data = {"email": user.email, "password": "wrong-password"}
+
+    response = client.post("/v1/auth/login/", data)
+    assert response.status_code == 403
+    assert response.json() == {"detail": "Invalid email/password"}
+
+
+@pytest.mark.django_db
+@patch("botocore.client.BaseClient._make_api_call", lambda *args, **kwargs: None)
 def test_tokens(logged_in_client):
     """
     Test refresh token
@@ -136,6 +154,7 @@ def test_tokens(logged_in_client):
 
 
 @pytest.mark.django_db
+@patch("botocore.client.BaseClient._make_api_call", lambda *args, **kwargs: None)
 def test_refresh_token_with_access_token(logged_in_client):
     """
     Test refresh token with access token should fail
@@ -251,6 +270,7 @@ def test_patch_profile_password_of_oauth_user_should_not_update():
 
 
 @pytest.mark.django_db
+@patch("botocore.client.BaseClient._make_api_call", lambda *args, **kwargs: None)
 def test_login_should_update_last_login_date_time(client):
     """
     Test User login should update last login date time

@@ -13,6 +13,9 @@ import datetime
 import os
 
 from zadala_config import (
+    AWS_SECRET_ACCESS_KEY,
+    AWS_SECRET_KEY_ID,
+    AWS_SNS_ARN,
     EMAIL_HOST_PASSWORD,
     EMAIL_HOST_PORT,
     EMAIL_HOST_PROVIDER,
@@ -222,6 +225,9 @@ RQ_QUEUES = {
 
 GOOGLE_CLIENT_ID = os.environ.get("GOOGLE_CLIENT_ID", GOOGLE_CLIENT_ID)
 GOOGLE_CLIENT_SECRET = os.environ.get("GOOGLE_CLIENT_SECRET", GOOGLE_CLIENT_SECRET)
+AWS_SECRET_KEY_ID = os.environ.get("AWS_SECRET_KEY_ID", AWS_SECRET_KEY_ID)
+AWS_SECRET_ACCESS_KEY = os.environ.get("AWS_SECRET_ACCESS_KEY", AWS_SECRET_ACCESS_KEY)
+AWS_SNS_ARN = os.environ.get("AWS_SNS_ARN", AWS_SNS_ARN)
 
 # Django 3.2
 DEFAULT_AUTO_FIELD = "django.db.models.AutoField"

@@ -20,3 +20,6 @@ EMAIL_HOST_PASSWORD = "gmail password"
 
 GOOGLE_CLIENT_ID = "Google client ID"
 GOOGLE_CLIENT_SECRET = "Google client secret"
+AWS_SECRET_KEY_ID = "AWS secret key ID"
+AWS_SECRET_ACCESS_KEY = "AWS secret access key"
+AWS_SNS_ARN = "AWS SNS ARN"

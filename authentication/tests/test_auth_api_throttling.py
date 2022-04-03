@@ -13,6 +13,7 @@ class TestAPILoginThrottling:
         cache.clear()
 
     @patch("rest_framework.throttling.SimpleRateThrottle.get_rate", lambda x: "10/day")
+    @patch("botocore.client.BaseClient._make_api_call", lambda *args, **kwargs: None)
     def test_login_throttle_should_raise_error_on_3_failed_attempts_with_same_user(
         self, client
     ):
@@ -32,6 +33,7 @@ class TestAPILoginThrottling:
 
     # Test for overridden method in custom_throttle.py allow_request()
     @patch("rest_framework.throttling.SimpleRateThrottle.get_rate", lambda x: None)
+    @patch("botocore.client.BaseClient._make_api_call", lambda *args, **kwargs: None)
     def test_login_throttle_should_not_raise_error_given_rate_is_none(self, client):
         """
         Test User login when rate is not set
@@ -46,6 +48,7 @@ class TestAPILoginThrottling:
     @patch(
         "rest_framework.throttling.AnonRateThrottle.get_cache_key", lambda x, y, z: None
     )
+    @patch("botocore.client.BaseClient._make_api_call", lambda *args, **kwargs: None)
     def test_login_throttle_should_not_raise_error_given_cache_key_is_none(
         self, client
     ):
@@ -60,6 +63,7 @@ class TestAPILoginThrottling:
 
     @patch("rest_framework.throttling.SimpleRateThrottle.get_rate", lambda x: "10/day")
     @patch("rest_framework.throttling.SimpleRateThrottle.timer")
+    @patch("botocore.client.BaseClient._make_api_call", lambda *args, **kwargs: None)
     def test_login_throttle_should_remove_cache_keys_with_past_datetime(
         self, mocked_timer, client
     ):
@@ -79,6 +83,7 @@ class TestAPILoginThrottling:
         assert response.status_code == 403 and response.json()
 
     @patch("rest_framework.throttling.SimpleRateThrottle.get_rate", lambda x: "10/day")
+    @patch("botocore.client.BaseClient._make_api_call", lambda *args, **kwargs: None)
     def test_login_throttle_should_proceed_when_users_are_different(self, client):
         """
         Test User login on 3 failed login attempts on different users should not raise any throttling errors

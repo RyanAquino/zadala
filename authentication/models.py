@@ -1,12 +1,17 @@
+from datetime import datetime
+
 from django.contrib.auth.models import (
     AbstractBaseUser,
     BaseUserManager,
     Group,
     PermissionsMixin,
 )
+from django.contrib.auth.signals import user_logged_in, user_login_failed
 from django.db import models
+from django.dispatch import receiver
 from rest_framework_simplejwt.tokens import RefreshToken
 
+from authentication import aws_operations
 from authentication.validators import AuthProviders, UserTokens
 
 
@@ -74,3 +79,42 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     def __str__(self):
         return self.email
+
+
+@receiver(user_logged_in)
+def on_login_success(sender, user, request, **kwargs):
+    user_agent = request.headers.get("User-Agent")
+    remote_address = request.META.get("REMOTE_ADDR")
+    current_utc_timestamp = datetime.today().utcnow().strftime("%Y-%m-%d %H:%M:%S")
+
+    message = {
+        "user_id": user.id,
+        "user_agent": user_agent,
+        "remote_address": remote_address,
+        "event": "login_success",
+        "timestamp": user.last_login.strftime("%Y-%m-%d %H:%M:%S"),
+    }
+
+    sns_operations = aws_operations.SNSOperations()
+    sns_operations.publish_message(
+        subject=f"login_event_{current_utc_timestamp}", message=message
+    )
+
+
+@receiver(user_login_failed)
+def on_login_failed(sender, request, **kwargs):
+    user_agent = request.headers.get("User-Agent")
+    remote_address = request.META.get("REMOTE_ADDR")
+    current_utc_timestamp = datetime.today().utcnow().strftime("%Y-%m-%d %H:%M:%S")
+
+    message = {
+        "user_id": 0,
+        "user_agent": user_agent,
+        "remote_address": remote_address,
+        "event": "login_failed",
+        "timestamp": current_utc_timestamp,
+    }
+    sns_operations = aws_operations.SNSOperations()
+    sns_operations.publish_message(
+        subject=f"login_event_{current_utc_timestamp}", message=message
+    )

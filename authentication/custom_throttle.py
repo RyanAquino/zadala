@@ -40,9 +40,6 @@ class UserLoginRateThrottle(AnonRateThrottle):
             while self.history and last_login_attempt <= self.now - self.duration:
                 self.history.pop()
 
-        if len(self.history) >= self.num_requests:
-            return self.throttle_failure()
-
         if len(self.history) >= self.max_attempts:
             failed = self.verify_fail_login_attempts(request)
 

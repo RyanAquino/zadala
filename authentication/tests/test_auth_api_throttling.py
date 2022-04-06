@@ -12,24 +12,6 @@ class TestAPILoginThrottling:
     def teardown(self):
         cache.clear()
 
-    @patch("rest_framework.throttling.SimpleRateThrottle.get_rate", lambda x: "1/day")
-    @patch("authentication.custom_throttle.UserLoginRateThrottle.wait", lambda x: 86400)
-    def test_login_throttle_should_raise_error_when_limit_reached(self, client):
-        """
-        Test User login with throttling limit of 1 per day
-        """
-        user = UserFactory()
-        data = {"email": user.email, "password": "wrong-password"}
-        client.post("/v1/auth/login/", data)
-
-        response = client.post("/v1/auth/login/", data)
-        response_data = response.json()
-
-        assert response.status_code == 429
-        assert response_data == {
-            "detail": "Request was throttled. Expected available in 86400 seconds."
-        }
-
     @patch("rest_framework.throttling.SimpleRateThrottle.get_rate", lambda x: "10/day")
     def test_login_throttle_should_raise_error_on_3_failed_attempts_with_same_user(
         self, client

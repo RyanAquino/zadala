@@ -1,5 +1,6 @@
 from datetime import datetime
 
+from django.conf import settings
 from django.contrib.auth.models import (
     AbstractBaseUser,
     BaseUserManager,
@@ -96,9 +97,10 @@ def on_login_success(sender, user, request, **kwargs):
     }
 
     sns_operations = aws_operations.SNSOperations()
-    sns_operations.publish_message(
-        subject=f"login_event_{current_utc_timestamp}", message=message
-    )
+    if not settings.DEBUG:
+        sns_operations.publish_message(
+            subject=f"login_event_{current_utc_timestamp}", message=message
+        )
 
 
 @receiver(user_login_failed)
@@ -115,6 +117,7 @@ def on_login_failed(sender, request, **kwargs):
         "timestamp": current_utc_timestamp,
     }
     sns_operations = aws_operations.SNSOperations()
-    sns_operations.publish_message(
-        subject=f"login_event_{current_utc_timestamp}", message=message
-    )
+    if not settings.DEBUG:
+        sns_operations.publish_message(
+            subject=f"login_event_{current_utc_timestamp}", message=message
+        )

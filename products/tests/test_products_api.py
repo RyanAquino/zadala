@@ -1,6 +1,8 @@
 import pytest
-from django.test.client import MULTIPART_CONTENT
+from django.contrib.auth.models import Group
+from django.test.client import MULTIPART_CONTENT, Client
 
+from authentication.tests.factories.user_factory import UserFactory
 from products.models import Product
 from products.tests.factories.product_factory import ProductFactory
 
@@ -110,6 +112,35 @@ def test_update_product(logged_in_client, logged_in_user):
     assert data["description"] == response_data["description"]
     assert data["price"] == response_data["price"]
     assert data["quantity"] == response_data["quantity"]
+
+
+@pytest.mark.django_db
+def test_patch_product_with_different_supplier(logged_in_user):
+    """
+    Test update a product created by different supplier
+    """
+    other_user = UserFactory.create(groups=Group.objects.all())
+    other_client = Client(HTTP_AUTHORIZATION=f"Bearer {other_user.tokens().token}")
+    content_type = MULTIPART_CONTENT
+    product = ProductFactory(supplier=logged_in_user)
+    data = {
+        "name": "Product 1 edited",
+    }
+    data = other_client._encode_json({} if not data else data, content_type)
+    encoded_data = other_client._encode_data(data, content_type)
+    response = other_client.generic(
+        "PATCH",
+        f"/v1/products/{product.id}/",
+        encoded_data,
+        content_type=content_type,
+        secure=False,
+        enctype="multipart/form-data",
+    )
+
+    assert response.status_code == 403
+    assert response.json() == {
+        "detail": "You do not have permission to perform this action."
+    }
 
 
 @pytest.mark.django_db

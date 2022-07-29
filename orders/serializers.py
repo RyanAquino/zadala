@@ -25,6 +25,38 @@ class OrderItemSerializer(serializers.ModelSerializer):
         fields = ["product", "order", "quantity", "date_added", "total"]
 
 
+class OrderHistorySerializer(serializers.ModelSerializer):
+    order_items = OrderItemSerializer(many=True)
+
+    class Meta:
+        model = Order
+        fields = ["date_ordered", "transaction_id", "order_items"]
+
+
+class UserOrderSerializer(serializers.Serializer):
+    total_items = serializers.IntegerField()
+    total_amount = serializers.FloatField()
+    products = OrderItemSerializer(many=True)
+
+
+class ShippingHistorySerializer(serializers.ModelSerializer):
+    order = OrderHistorySerializer()
+
+    class Meta:
+        model = ShippingAddress
+        fields = ["order", "address", "state", "city", "zipcode", "date_added"]
+
+
+class ShippingHistoryPaginatedSerializer(serializers.Serializer):
+    count = serializers.IntegerField()
+    next = serializers.CharField()
+    previous = serializers.CharField()
+    results = ShippingHistorySerializer(many=True)
+
+    class Meta:
+        fields = "__all__"
+
+
 class ShippingAddressSerializer(serializers.ModelSerializer):
     class Meta:
         model = ShippingAddress

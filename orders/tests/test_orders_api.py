@@ -6,6 +6,7 @@ import pytest
 from orders.models import Order, OrderItem
 from orders.tests.factories.order_factory import OrderFactory
 from orders.tests.factories.order_item_factory import OrderItemFactory
+from orders.tests.factories.shipping_address_factory import ShippingAddressFactory
 from products.tests.factories.product_factory import ProductFactory
 
 
@@ -21,6 +22,39 @@ def test_list_all_orders_with_empty_database(logged_in_client, logged_in_user):
         Order.objects.count() == 1
         and Order.objects.first().customer_id == logged_in_user.id
     )
+
+
+@pytest.mark.django_db
+def test_list_all_order_history(logged_in_client, logged_in_user):
+    """
+    Test list all order history for logged in user
+    """
+    customer_order1 = OrderFactory(customer=logged_in_user, complete=True)
+    customer_order2 = OrderFactory(customer=logged_in_user, complete=True)
+    OrderItemFactory(order=customer_order1)
+    OrderItemFactory(order=customer_order2)
+    ShippingAddressFactory(order=customer_order1, customer=logged_in_user)
+    ShippingAddressFactory(order=customer_order2, customer=logged_in_user)
+
+    response = logged_in_client.get("/v1/orders/history/")
+    assert response.status_code == 200
+    assert response.json() and len(response.json().get("results")) == 2
+
+
+@pytest.mark.django_db
+def test_list_order_history_with_ongoing_order(logged_in_client, logged_in_user):
+    """
+    Test list all order history with complete and not complete orders
+    """
+    complete_customer_order = OrderFactory(customer=logged_in_user, complete=True)
+    ongoing_customer_order = OrderFactory(customer=logged_in_user, complete=False)
+    OrderItemFactory(order=complete_customer_order)
+    OrderItemFactory(order=ongoing_customer_order)
+    ShippingAddressFactory(order=complete_customer_order, customer=logged_in_user)
+
+    response = logged_in_client.get("/v1/orders/history/")
+    assert response.status_code == 200
+    assert response.json() and len(response.json().get("results")) == 1
 
 
 @pytest.mark.django_db

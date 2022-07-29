@@ -56,6 +56,8 @@ services:
 
   zadala-api:
     container_name: zadala
+    volumes:
+      - .:/zadala
     build: .
     ports:
       - "8000:8000"
@@ -69,6 +71,8 @@ services:
 
   zadala-rq-worker:
     container_name: zadala-rq-worker
+    volumes:
+      - .:/zadala
     restart: always
     build: .
     environment: *common-variables

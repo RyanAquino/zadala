@@ -59,7 +59,7 @@ pluggy==0.13.1
 pre-commit==2.20.0
 protobuf==3.19.4
 psycopg2-binary==2.8.6
-py==1.9.0
+py==1.10.0
 py3-validate-email==1.0.5
 pyasn1==0.4.8
 pyasn1-modules==0.2.8

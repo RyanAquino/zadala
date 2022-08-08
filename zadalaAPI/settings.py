@@ -57,6 +57,7 @@ INSTALLED_APPS = [
     "corsheaders",
     "drf_yasg",
     "products",
+    "categories",
     "orders",
     "authentication",
     "rest_framework",

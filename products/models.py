@@ -3,6 +3,8 @@ from django.contrib.postgres.indexes import GinIndex, OpClass
 from django.db import models
 from django.db.models.functions import Upper
 
+from categories.models import Category
+
 
 class Product(models.Model):
     supplier = models.ForeignKey(
@@ -16,6 +18,9 @@ class Product(models.Model):
     image = models.ImageField(null=True)
     quantity = models.IntegerField(default=1)
     created_at = models.DateTimeField(auto_now_add=True)
+    category = models.ForeignKey(
+        Category, on_delete=models.SET_NULL, null=True, blank=True
+    )
 
     REQUIRED_FIELDS = "__all__"
 

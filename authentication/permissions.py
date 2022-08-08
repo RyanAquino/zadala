@@ -2,6 +2,13 @@ from django.contrib.auth.models import Group
 from rest_framework import permissions
 
 
+class AdminAccessPermission(permissions.BasePermission):
+    group = "Admin"
+
+    def has_permission(self, request, view):
+        return request.method in permissions.SAFE_METHODS or request.user.is_superuser
+
+
 class CustomerAccessPermission(permissions.BasePermission):
     group = "Customers"
 

@@ -19,5 +19,14 @@ def logged_in_user():
 
 
 @pytest.fixture
-def admin_group():
-    UserFactory.create(groups=(Group.objects.filter(name="Admins")))
+def admin_client(admin_user):
+    user_token = admin_user.tokens().token
+    return Client(HTTP_AUTHORIZATION=f"Bearer {user_token}")
+
+
+@pytest.fixture
+def admin_user():
+    skip_if_no_django()
+    return UserFactory.create(
+        groups=(Group.objects.filter(name="Admins")), is_superuser=True
+    )

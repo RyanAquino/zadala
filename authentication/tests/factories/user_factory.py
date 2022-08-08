@@ -18,6 +18,7 @@ class UserFactory(DjangoModelFactory):
     last_name = "account"
     password = PostGenerationMethodCall("set_password", "password")
     is_active = True
+    is_superuser = False
     auth_provider = AuthProviders.email.value
     date_joined = FuzzyNaiveDateTime(datetime(2022, 1, 1))
     last_login = FuzzyNaiveDateTime(datetime(2022, 1, 1))

@@ -11,7 +11,7 @@ from authentication.tests.factories.user_factory import UserFactory
 
 
 @pytest.mark.django_db
-def test_create_superuser_command(admin_group):
+def test_create_superuser_command():
     """
     Test admin account creation
     """

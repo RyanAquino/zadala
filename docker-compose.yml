@@ -15,7 +15,11 @@ x-common-variables: &common-variables
   SECRET_KEY: my-secret
   GOOGLE_CLIENT_ID:
   GOOGLE_CLIENT_SECRET:
-  REDISTOGO_URL: redis://redis:6379/0
+  REDIS_HOST: redis
+  REDIS_PORT: 6379
+  REDIS_DB: 0
+  REDIS_PASSWORD: ''
+
 
 services:
   db:

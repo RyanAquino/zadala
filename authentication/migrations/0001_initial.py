@@ -13,7 +13,6 @@ def apply_migration(apps, schema_editor):
 
 
 class Migration(migrations.Migration):
-
     initial = True
 
     dependencies = [

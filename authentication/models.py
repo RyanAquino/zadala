@@ -31,7 +31,6 @@ class UserManager(BaseUserManager):
         return user
 
     def create_superuser(self, email, first_name, last_name, password):
-
         data = {
             "email": email,
             "first_name": first_name,

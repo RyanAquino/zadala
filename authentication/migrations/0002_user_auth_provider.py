@@ -6,7 +6,6 @@ import authentication.validators
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("authentication", "0001_initial"),
     ]

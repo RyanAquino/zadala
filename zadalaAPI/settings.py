@@ -22,9 +22,9 @@ from zadala_config import (
     EMAIL_HOST_USER,
     GOOGLE_CLIENT_ID,
     GOOGLE_CLIENT_SECRET,
+    REDIS_DATABASE,
     ZADALA_SECRET_KEY,
     database,
-    redis_database,
 )
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
@@ -212,15 +212,24 @@ EMAIL_USE_TLS = True
 
 RQ_QUEUES = {
     "default": {
-        "URL": os.getenv("REDISTOGO_URL", redis_database["REDIS_URL"]),
-        "DEFAULT_TIMEOUT": 360,
+        "HOST": os.getenv("REDIS_HOST", REDIS_DATABASE["HOST"]),
+        "PORT": os.getenv("REDIS_PORT", REDIS_DATABASE["PORT"]),
+        "DB": os.getenv("REDIS_DB", REDIS_DATABASE["DB"]),
+        "PASSWORD": os.getenv("REDIS_PASSWORD", REDIS_DATABASE["PASSWORD"]),
+        "DEFAULT_TIMEOUT": os.getenv("REDIS_TIMEOUT", 360),
     },
     "high": {
-        "URL": os.getenv("REDISTOGO_URL", redis_database["REDIS_URL"]),
-        "DEFAULT_TIMEOUT": 500,
+        "HOST": os.getenv("REDIS_HOST", REDIS_DATABASE["HOST"]),
+        "PORT": os.getenv("REDIS_PORT", REDIS_DATABASE["PORT"]),
+        "DB": os.getenv("REDIS_DB", REDIS_DATABASE["DB"]),
+        "PASSWORD": os.getenv("REDIS_PASSWORD", REDIS_DATABASE["PASSWORD"]),
+        "DEFAULT_TIMEOUT": os.getenv("REDIS_TIMEOUT", 500),
     },
     "low": {
-        "URL": os.getenv("REDISTOGO_URL", redis_database["REDIS_URL"]),
+        "HOST": os.getenv("REDIS_HOST", REDIS_DATABASE["HOST"]),
+        "PORT": os.getenv("REDIS_PORT", REDIS_DATABASE["PORT"]),
+        "DB": os.getenv("REDIS_DB", REDIS_DATABASE["DB"]),
+        "PASSWORD": os.getenv("REDIS_PASSWORD", REDIS_DATABASE["PASSWORD"]),
     },
 }
 

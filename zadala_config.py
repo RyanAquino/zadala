@@ -7,9 +7,14 @@ database = {
     "PORT": "5432",
 }
 
-redis_database = {
-    "REDIS_URL": "redis://localhost:6379/0",
+
+REDIS_DATABASE = {
+    "HOST": "redis",
+    "PORT": 6379,
+    "DB": 0,
+    "PASSWORD": "",
 }
+
 
 ZADALA_SECRET_KEY = "my-secret"
 

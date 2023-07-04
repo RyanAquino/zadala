@@ -9,7 +9,7 @@ from authentication.tests.factories.user_factory import UserFactory
 
 @pytest.mark.django_db
 class TestAPILoginThrottling:
-    def teardown(self):
+    def teardown_method(self):
         cache.clear()
 
     @patch("rest_framework.throttling.SimpleRateThrottle.get_rate", lambda x: "10/day")

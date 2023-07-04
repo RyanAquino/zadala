@@ -6,7 +6,7 @@ from django.core.cache import cache
 
 @pytest.mark.django_db
 class TestSocialAuthAPILoginThrottling:
-    def teardown(self):
+    def teardown_method(self):
         cache.clear()
 
     @patch("google.oauth2.id_token.verify_oauth2_token")

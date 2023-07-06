@@ -16,6 +16,7 @@ Zadala API is an ecommerce web API built with django rest framework.
 - django rest framework
 - PostgreSQL
 - Redis
+- AWS
 - OAuth2
 
 

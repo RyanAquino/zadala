@@ -1,0 +1,90 @@
+version: '3.8'
+# docker-compose up && docker-compose rm -fsv # run and remove on exit
+
+x-common-variables: &common-variables
+  DB_ENGINE: django.db.backends.postgresql
+  DB_NAME: zadala
+  DB_USER: postgres
+  DB_PASS: 1
+  DB_HOST: db
+  DB_PORT: 5432
+  EMAIL_HOST_USER:
+  EMAIL_HOST_PASSWORD:
+  EMAIL_HOST_PORT: 587
+  EMAIL_HOST_PROVIDER: smtp.gmail.com
+  SECRET_KEY: my-secret
+  GOOGLE_CLIENT_ID:
+  GOOGLE_CLIENT_SECRET:
+  REDIS_HOST: redis
+  REDIS_PORT: 6379
+  REDIS_DB: 0
+  REDIS_PASSWORD: ''
+  SUPER_FIRST_NAME: admin
+  SUPER_LAST_NAME: admin
+  SUPER_USER_EMAIL: admin@email.com
+  SUPER_USER_PASSWORD: admin123
+  GUNICORN_WORKERS: 4
+
+
+services:
+  db:
+    image: postgres
+    container_name: postgresql-prod
+    restart: always
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U postgres" ]
+      interval: 5s
+      timeout: 10s
+      retries: 120
+    ports:
+      - "5432:5432"
+    expose:
+      - 5432
+    environment:
+      POSTGRES_PASSWORD: 1
+      POSTGRES_DB: zadala
+
+  redis:
+    image: redis:latest
+    container_name: redis-prod
+    restart: always
+    ports:
+      - "6379:6379"
+    expose:
+      - 6379
+
+  zadala-rq-worker:
+    container_name: zadala-rq-worker
+    volumes:
+      - .:/zadala
+    restart: always
+    build: .
+    environment: *common-variables
+    command: sh -c "python manage.py rqworker high default low"
+    depends_on:
+      - redis
+
+  zadala-api-gunicorn:
+    container_name: zadala-api-gunicorn
+    volumes:
+      - .:/zadala
+    build:
+      context: ./
+      dockerfile: Dockerfile.prod
+    environment: *common-variables
+    depends_on:
+      db:
+        condition: service_healthy
+
+  zadala-nginx:
+    container_name: zadala-nginx
+    image: nginx:latest
+    volumes:
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
+      - ./staticfiles:/staticfiles
+    ports:
+      - "80:80"
+    expose:
+      - 80
+    depends_on:
+      - zadala-api-gunicorn

@@ -1,0 +1,13 @@
+FROM python:3.8
+
+ENV PYTHONUNBUFFERED 1
+
+RUN mkdir /zadala
+
+WORKDIR /zadala
+
+COPY . .
+
+RUN pip install -r requirements.txt
+
+ENTRYPOINT ["sh", "/zadala/entrypoint.sh"]

@@ -79,7 +79,7 @@ pytz==2020.1
 PyYAML==6.0
 redis==4.4.4
 regex==2020.7.14
-requests==2.26.0
+requests==2.31.0
 rest-condition==1.0.3
 rq==1.10.1
 rsa==4.8

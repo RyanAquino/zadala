@@ -11,13 +11,14 @@ Zadala API is an ecommerce web API built with django rest framework.
 - docker-compose
 
 ### Technology
-- python 3
-- pytest
-- django rest framework
+- Python 3
+- Pytest
+- Django rest framework
 - PostgreSQL
 - Redis
 - AWS
 - OAuth2
+- NGINX
 
 
 ### Setup
@@ -59,15 +60,15 @@ http://localhost:8000/api-docs
 
 ### Setup with Docker (Alternative)
 ```
-docker-compose up -d
+docker-compose -f deployments/docker-compose.yml up -d
 ```
 
 ### Load initial data (Optional)
 ```
-python manage.py loaddata init_data.json
+python manage.py loaddata resources/init_data.json
 ```
 
-### Running tests
+### Running tests with coverage
 ```
-pytest .
+pytest . -v --cov
 ```

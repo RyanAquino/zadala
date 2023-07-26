@@ -1,5 +1,20 @@
+# Config files
+.isort.cfg
+.pre-commit-config.yaml
+mypy.ini
+.flake8
+.coveragerc
+pytest.ini
+
+# Tests
+conftest.py
+tests
+
+# Unnecessary
+README.md
 venv
 .mypy_cache
+__pycache__
 .pytest_cache
-static
+staticfiles
 .coverage

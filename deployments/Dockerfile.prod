@@ -6,8 +6,8 @@ RUN mkdir /zadala
 
 WORKDIR /zadala
 
-COPY . .
+COPY ../ .
 
 RUN pip install -r requirements.txt
 
-ENTRYPOINT ["sh", "/zadala/entrypoint.sh"]
+ENTRYPOINT ["sh", "/zadala/deployments/entrypoint.sh"]

@@ -6,7 +6,7 @@ RUN mkdir /zadala
 
 WORKDIR /zadala
 
-COPY . .
+COPY ../ .
 
 RUN pip install -r requirements.txt
 

@@ -24,6 +24,7 @@ x-common-variables: &common-variables
   SUPER_USER_EMAIL: admin@email.com
   SUPER_USER_PASSWORD: admin123
   GUNICORN_WORKERS: 4
+  ENV: prod
 
 
 services:
@@ -79,6 +80,7 @@ services:
     image: nginx:latest
     volumes:
       - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
+      - ../static:/static
     ports:
       - "80:80"
     expose:

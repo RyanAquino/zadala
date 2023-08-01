@@ -15,6 +15,9 @@ x-common-variables: &common-variables
   SECRET_KEY: my-secret
   GOOGLE_CLIENT_ID:
   GOOGLE_CLIENT_SECRET:
+  AWS_SECRET_KEY_ID:
+  AWS_SECRET_ACCESS_KEY:
+  AWS_SNS_ARN:
   REDIS_HOST: redis
   REDIS_PORT: 6379
   REDIS_DB: 0
@@ -59,9 +62,9 @@ services:
     restart: always
     build:
       context: ../
-      dockerfile: deployments/Dockerfile.prod
+      dockerfile: deployments/Dockerfile
     environment: *common-variables
-    command: sh -c "python manage.py rqworker high default low"
+    command: sh -c "poetry run python manage.py rqworker high default low"
     depends_on:
       - redis
 

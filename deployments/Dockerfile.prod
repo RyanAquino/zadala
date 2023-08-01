@@ -8,6 +8,8 @@ WORKDIR /zadala
 
 COPY ../ .
 
-RUN pip install -r requirements.txt
+RUN pip install poetry==1.5.1
+
+RUN poetry install --without dev
 
 ENTRYPOINT ["sh", "/zadala/deployments/entrypoint.sh"]

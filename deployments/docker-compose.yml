@@ -15,6 +15,9 @@ x-common-variables: &common-variables
   SECRET_KEY: my-secret
   GOOGLE_CLIENT_ID:
   GOOGLE_CLIENT_SECRET:
+  AWS_SECRET_KEY_ID:
+  AWS_SECRET_ACCESS_KEY:
+  AWS_SNS_ARN:
   REDIS_HOST: redis
   REDIS_PORT: 6379
   REDIS_DB: 0
@@ -67,7 +70,7 @@ services:
     expose:
       - 8000
     environment: *common-variables
-    command: sh -c "python manage.py migrate && python manage.py collectstatic --noinput && python manage.py runserver 0.0.0.0:8000"
+    command: sh -c "poetry run python manage.py migrate && poetry run python manage.py collectstatic --noinput && poetry run python manage.py runserver 0.0.0.0:8000"
     depends_on:
       db:
         condition: service_healthy
@@ -78,6 +81,6 @@ services:
       context: ../
       dockerfile: deployments/Dockerfile
     environment: *common-variables
-    command: sh -c "python manage.py rqworker high default low"
+    command: sh -c "poetry run python manage.py rqworker high default low"
     depends_on:
       - redis

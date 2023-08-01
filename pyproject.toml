@@ -1,0 +1,75 @@
+[tool.poetry]
+name = "zadala"
+version = "1.5.3"
+description = "Zadala API is an ecommerce web API built with django rest framework."
+authors = ["RyanAquino <ryan.aquino7110@gmail.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.8"
+djangorestframework = "3.13.1"
+drf-yasg = "1.20.0"
+pydantic = "1.9.0"
+django = "3.2.20"
+boto3 = "1.21.32"
+psycopg2-binary = "2.9.6"
+whitenoise = "5.2.0"
+django-cors-headers = "3.7.0"
+django-rq = "2.8.1"
+djangorestframework-simplejwt = "5.1.0"
+rest-condition = "1.0.3"
+py3-validate-email = "1.0.5"
+google-api-python-client = "2.37.0"
+pillow = "9.3.0"
+gunicorn = "^21.2.0"
+
+
+[tool.poetry.group.dev.dependencies]
+black = "23.1.0"
+factory-boy = "3.2.0"
+flake8 = "3.8.3"
+isort = "5.10.1"
+mypy = "0.941"
+pre-commit = "^3.3.3"
+pytest = "^7.4.0"
+pytest-django = "^4.5.2"
+pytest-cov = "^4.1.0"
+pytest-xdist = "^3.3.1"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+
+# Pytest
+[tool.pytest.ini_options]
+DJANGO_SETTINGS_MODULE = "zadalaAPI.settings"
+addopts = "-v"
+
+# Pytest coverage
+[tool.coverage.run]
+omit = [
+    "*/management/*",
+    "*/migrations/*",
+    "*/tests/*",
+    "*/venv/*",
+    "*/zadalaAPI/*",
+    "manage.py",
+    "*/apps.py",
+]
+
+[tool.coverage.report]
+show_missing = true
+
+# Isort
+[tool.isort]
+profile = "black"
+
+# Mypy
+[tool.mypy]
+ignore_missing_imports = true
+exclude = "venv"
+[[tool.mypy.overrides]]
+module = ['*.migrations.*']
+ignore_errors = true
+

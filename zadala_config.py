@@ -9,7 +9,7 @@ database = {
 
 
 REDIS_DATABASE = {
-    "HOST": "redis",
+    "HOST": "localhost",
     "PORT": 6379,
     "DB": 0,
     "PASSWORD": "",

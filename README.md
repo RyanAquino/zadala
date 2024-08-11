@@ -7,6 +7,7 @@ Zadala API is an ecommerce web API built with django rest framework.
 
 ### Requirements
 - python 3
+- poetry
 - docker
 - docker-compose
 
@@ -24,11 +25,11 @@ Zadala API is an ecommerce web API built with django rest framework.
 ### Setup
 ##### create virtual environment
 ```
-python -m venv venv
+poetry shell
 ```
 ##### Install required packages
 ```
-pip install -r requirements.txt
+poetry install
 ```
 ##### Edit `zadala_config.py` base on your needs
 ```
